@@ -52,7 +52,7 @@ export function Navbar() {
   const NavLink = ({ href, children, className = "" }: { href: string, children: React.ReactNode, className?: string }) => (
     <button
       onClick={() => handleNavigation(href)}
-      className={`text-gray-700 hover:text-blue-600 transition-colors cursor-pointer px-3 py-2 rounded-md text-sm font-medium ${className} ${
+      className={`text-gray-700 hover:text-blue-600 transition-colors cursor-pointer px-2 xl:px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap ${className} ${
         location === href ? 'text-blue-600 bg-blue-50' : ''
       }`}
     >
@@ -90,7 +90,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden xl:flex items-center space-x-1">
             <NavLink href={paths.marketplace}>Missions</NavLink>
             <NavLink href={paths.availableProviders}>Prestataires</NavLink>
             <NavLink href={paths.services}>Services</NavLink>
@@ -198,15 +198,123 @@ export function Navbar() {
             <NavLink href="/features">Fonctionnalités</NavLink>
           </div>
 
+          {/* Medium Desktop Navigation (compact) */}
+          <div className="hidden lg:flex xl:hidden items-center space-x-1">
+            <NavLink href={paths.marketplace}>Missions</NavLink>
+            <NavLink href={paths.availableProviders}>Prestataires</NavLink>
+            <NavLink href={paths.services}>Services</NavLink>
+            
+            {/* Combined dropdown for demo + IA features on medium screens */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={`text-gray-700 hover:text-blue-600 transition-colors cursor-pointer px-2 py-2 rounded-md text-sm font-medium flex items-center ${
+                    location.includes('/demo') || location.includes('/ai-') ? 'text-blue-600 bg-blue-50' : ''
+                  }`}
+                >
+                  <Brain className="w-4 h-4 mr-1" />
+                  Plus
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                  <Badge className="ml-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs">
+                    NOUVEAU
+                  </Badge>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-64 z-50">
+                <div className="px-2 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
+                  Mode Démo
+                </div>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => handleNavigation('/demo/missions')}
+                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                  >
+                    <Target className="w-4 h-4 mr-2" />
+                    Missions démo
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => handleNavigation('/demo/profils')}
+                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Profils démo
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => handleNavigation('/demo/ia')}
+                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                  >
+                    <Brain className="w-4 h-4 mr-2" />
+                    IA en action
+                  </button>
+                </DropdownMenuItem>
+                
+                <div className="px-2 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-t mt-1">
+                  IA Features
+                </div>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => handleNavigation('/ai-dashboard')}
+                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                  >
+                    <Brain className="w-4 h-4 mr-2" />
+                    Tableau de Bord IA
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => handleNavigation('/ai-features')}
+                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                  >
+                    <Zap className="w-4 h-4 mr-2" />
+                    Fonctionnalités IA
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => handleNavigation('/ai-test')}
+                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                  >
+                    <Search className="w-4 h-4 mr-2" />
+                    Test IA
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => handleNavigation('/ai-advanced')}
+                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                  >
+                    <TrendingUp className="w-4 h-4 mr-2" />
+                    IA Avancée
+                  </button>
+                </DropdownMenuItem>
+                
+                <div className="px-2 py-2 border-t mt-1">
+                  <button
+                    onClick={() => handleNavigation('/features')}
+                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                  >
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Fonctionnalités
+                  </button>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
           {/* User Menu / Auth Buttons */}
           <div className="flex items-center space-x-4">
             {/* Desktop quick mission creator button */}
             <Sheet open={showQuickCreator} onOpenChange={setShowQuickCreator}>
               <SheetTrigger asChild>
                 <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Nouvelle mission</span>
-                  <span className="sm:hidden">Créer</span>
+                  <Plus className="w-4 h-4 mr-1 xl:mr-2" />
+                  <span className="hidden xl:inline">Nouvelle mission</span>
+                  <span className="hidden lg:inline xl:hidden">Mission</span>
+                  <span className="lg:hidden">Créer</span>
                 </Button>
               </SheetTrigger>
               <SheetContent className="w-[400px] sm:w-[500px]">
@@ -230,16 +338,16 @@ export function Navbar() {
             {user ? (
               <div className="flex items-center space-x-4">
                 {/* Desktop User Menu */}
-                <div className="hidden lg:flex items-center space-x-4">
+                <div className="hidden xl:flex items-center space-x-3">
                   <button
                     onClick={() => handleNavigation('/missions')}
-                    className="text-gray-700 hover:text-blue-600 transition-colors px-3 py-2"
+                    className="text-gray-700 hover:text-blue-600 transition-colors px-2 py-2 text-sm"
                   >
                     Mes missions
                   </button>
                   <button
                     onClick={() => handleNavigation('/messages')}
-                    className="text-gray-700 hover:text-blue-600 transition-colors relative px-3 py-2"
+                    className="text-gray-700 hover:text-blue-600 transition-colors relative px-2 py-2 text-sm"
                   >
                     Messages
                   </button>
