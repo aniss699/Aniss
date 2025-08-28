@@ -98,6 +98,9 @@ export function MissionDetailModal({ missionId, isOpen, onClose }: MissionDetail
           <VisuallyHidden>
             <DialogTitle>Détails de la mission</DialogTitle>
           </VisuallyHidden>
+          <VisuallyHidden.Root>
+            <DialogTitle>Détails de la mission</DialogTitle>
+          </VisuallyHidden.Root>
           <DialogTitle className="text-xl sm:text-2xl font-bold pr-8 text-white">
             {mission.title}
           </DialogTitle>
