@@ -7,7 +7,7 @@ export { BriefEnhancer } from './brief-enhancer';
 export { MissionStandardizer } from './mission-standardizer';
 export { AIAssistant } from './ai-assistant';
 
-// Composants non-critiques - lazy loading
+// Composants non-critiques - lazy loading optimisé
 export const AdvancedAIDashboard = lazy(() => 
   import('./advanced-ai-dashboard').then(module => ({ default: module.AdvancedAIDashboard }))
 );
@@ -25,19 +25,19 @@ export const MarketIntelligenceDashboard = lazy(() =>
 );
 
 export const SmartBidAnalyzer = lazy(() => 
-  import('./smart-bid-analyzer').then(module => ({ default: module.SmartBidAnalyzer }))
+  import('./smart-bid-analyzer').then(module => ({ default: module.default }))
 );
 
 export const ProfileCompletenessAnalyzer = lazy(() => 
-  import('./profile-completeness-analyzer').then(module => ({ default: module.ProfileCompletenessAnalyzer }))
+  import('./profile-completeness-analyzer').then(module => ({ default: module.default }))
 );
 
 export const MissionMatchingEngine = lazy(() => 
-  import('./mission-matching-engine').then(module => ({ default: module.MissionMatchingEngine }))
+  import('./mission-matching-engine').then(module => ({ default: module.default }))
 );
 
 export const IntelligentDashboard = lazy(() => 
-  import('./intelligent-dashboard').then(module => ({ default: module.IntelligentDashboard }))
+  import('./intelligent-dashboard').then(module => ({ default: module.default }))
 );
 
 // Types

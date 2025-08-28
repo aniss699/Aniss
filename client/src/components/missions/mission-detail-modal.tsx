@@ -9,9 +9,8 @@ import {
   DialogContent,
   DialogTitle,
   DialogDescription,
-  DialogTrigger,
-  VisuallyHidden,
-  DialogHeader
+  DialogHeader,
+  VisuallyHidden
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
