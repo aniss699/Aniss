@@ -90,8 +90,12 @@ export function MissionDetailModal({ missionId, isOpen, onClose }: MissionDetail
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto p-0 bg-white border-0 shadow-2xl rounded-xl">
-        <DialogHeader>
+      <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto p-0 bg-white border-0 shadow-2xl rounded-xl" aria-describedby="mission-description">
+          <DialogTitle className="sr-only">{mission.title}</DialogTitle>
+          <DialogDescription id="mission-description" className="sr-only">
+            Détails de la mission: {mission.description.substring(0, 100)}...
+          </DialogDescription>
+          <DialogHeader>
           <VisuallyHidden>
             <DialogTitle>Détails de la mission</DialogTitle>
           </VisuallyHidden>

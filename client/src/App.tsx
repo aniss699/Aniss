@@ -1,91 +1,70 @@
-import { Switch, Route, Redirect } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/hooks/use-auth";
-import { Navbar } from "@/components/layout/navbar";
-import { paths } from "./routes/paths";
-import Home from "@/pages/home";
-import Marketplace from "@/pages/marketplace";
-import Missions from '@/pages/missions';
-import CreateMission from '@/pages/create-mission';
-import Legal from '@/pages/legal';
-import Features from '@/pages/features';
-import Profile from '@/pages/profile';
-import Messages from '@/pages/messages';
-import AvailableProviders from './pages/available-providers';
-import NotFound from "@/pages/not-found";
-import Dashboard from "./pages/dashboard";
-import AIFeatures from "./pages/ai-features";
-import AITest from "./pages/ai-test";
-import AIDashboard from "./pages/ai-dashboard";
-import ProjectImprove from './pages/project-improve';
-import AIAdvancedFeatures from './pages/ai-advanced-features';
-import { ProfileDashboard } from './profile/ProfileDashboard';
-import { ProfileWizard } from './profile/ProfileWizard';
-import { ProfilePublicView } from './profile/ProfilePublicView';
-import DemoMissions from './pages/demo-missions';
-import Services from './pages/services';
+import React, { Suspense } from 'react';
+import { Router, Route, Switch } from 'wouter';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from 'next-themes';
+import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/hooks/use-auth';
+import Navbar from '@/components/layout/navbar';
+import { queryClient } from '@/lib/queryClient';
+
+// Lazy load pages for better performance
+const Home = React.lazy(() => import('@/pages/home'));
+const Marketplace = React.lazy(() => import('@/pages/marketplace'));
+const Missions = React.lazy(() => import('@/pages/missions'));
+const CreateMission = React.lazy(() => import('@/pages/create-mission'));
+const Profile = React.lazy(() => import('@/pages/profile'));
+const Dashboard = React.lazy(() => import('@/pages/dashboard'));
+const Messages = React.lazy(() => import('@/pages/messages'));
+const Services = React.lazy(() => import('@/pages/services'));
+const Legal = React.lazy(() => import('@/pages/legal'));
+const Features = React.lazy(() => import('@/pages/features'));
+const AIFeatures = React.lazy(() => import('@/pages/ai-features'));
+const AIDashboard = React.lazy(() => import('@/pages/ai-dashboard'));
+const AIAdvancedFeatures = React.lazy(() => import('@/pages/ai-advanced-features'));
+const AITest = React.lazy(() => import('@/pages/ai-test'));
+const NotFound = React.lazy(() => import('@/pages/not-found'));
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+  </div>
+);
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <div className="min-h-screen bg-gray-50">
-            <Navbar />
-            <Switch>
-              <Route path={paths.home} component={Home} />
-              <Route path={paths.marketplace} component={Marketplace} />
-              <Route path={paths.availableProviders} component={AvailableProviders} />
-              <Route path={paths.aiFeatures} component={AIFeatures} />
-              <Route path={paths.aiTest} component={AITest} />
-              <Route path={paths.features} component={Features} />
-              <Route path={paths.profile} component={Profile} />
-              <Route path={paths.missionDetail()} component={Missions} />
-              <Route path={paths.missions} component={Missions} />
-              <Route path={paths.createMission} component={CreateMission} />
-              <Route path={paths.messages} component={Messages} />
-              <Route path={paths.legal} component={Legal} />
-              <Route path={paths.dashboard} component={Dashboard} />
-              <Route path={paths.aiDashboard} component={AIDashboard} />
-              <Route path="/project-improve" component={ProjectImprove} />
-              <Route path="/profil" component={ProfileDashboard} />
-              <Route path="/profil/editer" component={ProfileWizard} />
-              <Route path="/profil/:userId" component={ProfilePublicView} />
-              <Route path="/ai-advanced" component={AIAdvancedFeatures} />
-              <Route path="/demo/missions" component={DemoMissions} />
-              <Route path="/demo/profils" component={AvailableProviders} />
-              <Route path="/demo/ia" component={AIFeatures} />
-              <Route path="/services" component={Services} />
-              <Route path="/services/:type" component={Services} />
-
-              {/* Redirections compatibilité anciennes URLs */}
-              <Route path="/mes-missions">
-                {() => <Redirect to={paths.missions} />}
-              </Route>
-              <Route path="/mission/new">
-                {() => <Redirect to={paths.createMission} />}
-              </Route>
-              <Route path="/mission/:id">
-                {(params) => <Redirect to={paths.missionDetail(params.id)} />}
-              </Route>
-              <Route path="/projet/new">
-                {() => <Redirect to={paths.createMission} />}
-              </Route>
-              <Route path="/project/:id">
-                {(params) => <Redirect to={paths.missionDetail(params.id)} />}
-              </Route>
-
-              {/* 404 */}
-              <Route path={paths.notFound} component={NotFound} />
-              <Route path="*" component={NotFound} />
-            </Switch>
-          </div>
-          <Toaster />
-        </TooltipProvider>
-      </AuthProvider>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+        <AuthProvider>
+          <Router>
+            <div className="min-h-screen bg-background">
+              <Navbar />
+              <main className="pt-16">
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Switch>
+                    <Route path="/" component={Home} />
+                    <Route path="/marketplace" component={Marketplace} />
+                    <Route path="/missions" component={Missions} />
+                    <Route path="/create-mission" component={CreateMission} />
+                    <Route path="/profile" component={Profile} />
+                    <Route path="/dashboard" component={Dashboard} />
+                    <Route path="/messages" component={Messages} />
+                    <Route path="/services" component={Services} />
+                    <Route path="/legal" component={Legal} />
+                    <Route path="/features" component={Features} />
+                    <Route path="/ai-features" component={AIFeatures} />
+                    <Route path="/ai-dashboard" component={AIDashboard} />
+                    <Route path="/ai-advanced" component={AIAdvancedFeatures} />
+                    <Route path="/ai-test" component={AITest} />
+                    <Route component={NotFound} />
+                  </Switch>
+                </Suspense>
+              </main>
+              <Toaster />
+            </div>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
