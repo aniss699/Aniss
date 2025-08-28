@@ -2075,7 +2075,7 @@ function generateGenericOptimizedDescription(description, title, analysis) {
 ${description.length > 50 ? description : 'Nous recherchons un professionnel qualifié pour réaliser ce projet avec succès.'}
 
 **Objectifs :**
-• Livraison d\'un résultat de haute qualité
+• Livraison d'un résultat de haute qualité
 • Respect des délais convenus
 • Communication transparente tout au long du projet
 • ${analysis.hasComplexFeatures ? 'Innovation et créativité' : 'Satisfaction client garantie'}

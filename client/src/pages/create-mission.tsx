@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
@@ -416,7 +416,7 @@ export default function CreateMission() {
                     <Checkbox
                       id="geo_required"
                       checked={formData.geo_required}
-                      onCheckedChange={(checked) => handleInputChange('geo_required', checked)}
+                      onCheckedChange={(checked) => handleInputChange('geo_required', checked !== 'indeterminate' ? checked : false)}
                     />
                     <Label htmlFor="geo_required">Intervention sur site requise</Label>
                   </div>
@@ -679,7 +679,8 @@ export default function CreateMission() {
 
           {/* Analyse IA - Lazy loaded */}
           {(formData.title && formData.description && formData.description.length > 20) && (
-            <React.Suspense fallback={<div>Chargement...</div>}>
+            <React.Suspense fallback={<div className="text-center py-8">Chargement des suggestions IA...</div>}>
+              {/* Le composant BriefEnhancer est maintenant responsablé de l'appel analyseWithAI */}
               <BriefEnhancer
                 briefData={{
                   title: formData.title,
@@ -688,7 +689,8 @@ export default function CreateMission() {
                 }}
                 onEnhancementComplete={(enhancements) => {
                   console.log('Enhancements received:', enhancements);
-                  // Optionnel : stocker pour usage ultérieur
+                  // Ici, vous pouvez mettre à jour le state de `formData` ou `aiSuggestion` si nécessaire
+                  // Par exemple : setFormData(prev => ({ ...prev, description: enhancements.summary }));
                 }}
               />
             </React.Suspense>

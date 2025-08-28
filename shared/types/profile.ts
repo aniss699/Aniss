@@ -1,38 +1,69 @@
 
-export type UserRole = "client" | "provider";
-
-export interface BaseProfile {
+export interface Profile {
+  id: string;
   userId: string;
-  role: UserRole;
-  displayName: string;
-  avatarUrl?: string;
-  headline?: string;
+  name: string;
+  email: string;
+  type: 'client' | 'provider';
+  avatar?: string;
   bio?: string;
-  location?: { city?: string; country?: string; lat?: number; lng?: number };
-  languages?: string[];               // ex: ["fr","en"]
-  keywords?: string[];                // mots-clés libres
-  skills?: Array<{ name: string; level?: 1|2|3|4|5 }>;
-  industries?: string[];
-  portfolio?: Array<{ title: string; url?: string; image?: string; description?: string }>;
-  certifications?: Array<{ name: string; issuer?: string; year?: number }>;
-  availability?: { modes?: ("on-site"|"remote")[]; hoursPerWeek?: number; timezones?: string[]; earliestStartDate?: string };
-  rates?: { currency: "EUR"; rateType?: "hourly"|"fixed"; min?: number; max?: number };
-  preferences?: { visibility?: "public"|"private"|"anonymized"; gdprConsent?: boolean };
-  completeness?: number;              // calculé
-  badges?: string[];
-  createdAt: string; 
-  updatedAt: string;
+  location?: string;
+  skills?: string[];
+  keywords?: string[];
+  hourlyRate?: number;
+  availability?: string;
+  portfolio?: PortfolioItem[];
+  certifications?: Certification[];
+  reviews?: Review[];
+  completeness?: number;
+  verificationStatus?: 'pending' | 'verified' | 'rejected';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface ClientProfile extends BaseProfile {
-  company?: { name?: string; siret?: string; size?: "solo"|"TPE"|"PME"|"ETI"|"GE" };
-  pastBudgets?: number[];
+export interface PortfolioItem {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  projectUrl?: string;
+  technologies?: string[];
+  completedAt: Date;
 }
 
-export interface ProviderProfile extends BaseProfile {
-  yearsExperience?: number;
-  serviceAreas?: string[];
-  equipment?: string[];
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  issueDate: Date;
+  expiryDate?: Date;
+  credentialUrl?: string;
 }
 
-export type AnyProfile = ClientProfile | ProviderProfile;
+export interface Review {
+  id: string;
+  clientId: string;
+  clientName: string;
+  rating: number;
+  comment: string;
+  projectTitle?: string;
+  createdAt: Date;
+}
+
+export interface ProfileFormData {
+  name: string;
+  bio: string;
+  location: string;
+  skills: string[];
+  keywords: string[];
+  hourlyRate?: number;
+  availability: string;
+}
+
+export interface ProfileStats {
+  completeness: number;
+  totalProjects: number;
+  averageRating: number;
+  responseTime: string;
+  skillsCount: number;
+}
