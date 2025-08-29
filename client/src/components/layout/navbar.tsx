@@ -4,7 +4,7 @@ import { useLocation } from 'wouter';
 import { Badge } from '@/components/ui/badge';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { useAuth } from '@/hooks/use-auth';
-import { paths } from '@/routes/paths';
+import { ROUTES } from '@/routes/paths';
 import { User, LogOut, Menu, X, Briefcase, Users, BarChart3, Target, Brain, MessageSquare, Search, Zap, TrendingUp, Plus, MonitorPlay, ChevronDown } from 'lucide-react';
 import {
   Sheet,
@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from '@/components/ui/button';
 import { QuickMissionCreator } from '@/components/missions/quick-mission-creator';
-import Link from 'wouter/link';
 
 export function Navbar() {
   const [location, setLocation] = useLocation();
@@ -79,7 +78,7 @@ export function Navbar() {
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => handleNavigation(paths.home)}
+              onClick={() => handleNavigation(ROUTES.HOME)}
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
@@ -89,141 +88,47 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden xl:flex items-center space-x-1">
-            <NavLink href={paths.marketplace}>Missions</NavLink>
-            <NavLink href={paths.availableProviders}>Prestataires</NavLink>
-            <NavLink href={paths.services}>Services</NavLink>
+          {/* Desktop Navigation - Unified Simple Structure */}
+          <div className="hidden lg:flex items-center space-x-1">
+            {/* Main sections */}
+            <NavLink href={ROUTES.MARKETPLACE}>Missions</NavLink>
+            <NavLink href="/available-providers">Prestataires</NavLink>
+            <NavLink href={ROUTES.SERVICES}>Services</NavLink>
             
-            {/* Mode Démo Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  className={`text-gray-700 hover:text-blue-600 transition-colors cursor-pointer px-3 py-2 rounded-md text-sm font-medium flex items-center ${
-                    location.includes('/demo') ? 'text-blue-600 bg-blue-50' : ''
-                  }`}
-                >
-                  <MonitorPlay className="w-4 h-4 mr-2" />
-                  Mode démo
-                  <ChevronDown className="w-4 h-4 ml-1" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-56 z-50">
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/demo/missions')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Target className="w-4 h-4 mr-2" />
-                    Missions démo
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/demo/profils')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Profils démo
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/demo/ia')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Brain className="w-4 h-4 mr-2" />
-                    IA en action
-                  </button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* IA Features Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  className={`text-gray-700 hover:text-blue-600 transition-colors cursor-pointer px-3 py-2 rounded-md text-sm font-medium flex items-center ${
-                    location.includes('/ai-') ? 'text-blue-600 bg-blue-50' : ''
-                  }`}
-                >
-                  <Brain className="w-4 h-4 mr-2" />
-                  IA Features
-                  <ChevronDown className="w-4 h-4 ml-1" />
-                  <Badge className="ml-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs">
-                    NOUVEAU
-                  </Badge>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-56 z-50">
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/ai-dashboard')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Brain className="w-4 h-4 mr-2" />
-                    Tableau de Bord IA
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/ai-features')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Zap className="w-4 h-4 mr-2" />
-                    Fonctionnalités IA
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/ai-test')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Search className="w-4 h-4 mr-2" />
-                    Test IA
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/ai-advanced')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    IA Avancée
-                  </button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <NavLink href="/features">Fonctionnalités</NavLink>
-          </div>
-
-          {/* Medium Desktop Navigation (compact) */}
-          <div className="hidden lg:flex xl:hidden items-center space-x-1">
-            <NavLink href={paths.marketplace}>Missions</NavLink>
-            <NavLink href={paths.availableProviders}>Prestataires</NavLink>
-            <NavLink href={paths.services}>Services</NavLink>
+            {/* Demo sections - now at main level */}
+            <NavLink href="/demo/missions" className="hidden xl:block">Missions Démo</NavLink>
+            <NavLink href="/demo/profils" className="hidden xl:block">Profils Démo</NavLink>
+            <NavLink href="/demo/ia" className="hidden xl:block">IA Action</NavLink>
             
-            {/* Combined dropdown for demo + IA features on medium screens */}
+            {/* IA Features - now at main level */}
+            <NavLink href="/ai-dashboard" className="hidden xl:block">
+              <span className="flex items-center">
+                IA Dashboard
+                <Badge className="ml-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs">
+                  NOUVEAU
+                </Badge>
+              </span>
+            </NavLink>
+            <NavLink href="/ai-features" className="hidden xl:block">IA Features</NavLink>
+            <NavLink href="/ai-test" className="hidden xl:block">Test IA</NavLink>
+            
+            {/* Compact dropdown for medium screens only */}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild className="xl:hidden">
                 <button
                   className={`text-gray-700 hover:text-blue-600 transition-colors cursor-pointer px-2 py-2 rounded-md text-sm font-medium flex items-center ${
                     location.includes('/demo') || location.includes('/ai-') ? 'text-blue-600 bg-blue-50' : ''
                   }`}
                 >
                   <Brain className="w-4 h-4 mr-1" />
-                  Plus
+                  Démo & IA
                   <ChevronDown className="w-4 h-4 ml-1" />
                   <Badge className="ml-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs">
                     NOUVEAU
                   </Badge>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-64 z-50">
-                <div className="px-2 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
-                  Mode Démo
-                </div>
+              <DropdownMenuContent align="center" className="w-56 z-50">
                 <DropdownMenuItem asChild>
                   <button
                     onClick={() => handleNavigation('/demo/missions')}
@@ -251,17 +156,14 @@ export function Navbar() {
                     IA en action
                   </button>
                 </DropdownMenuItem>
-                
-                <div className="px-2 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-t mt-1">
-                  IA Features
-                </div>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <button
                     onClick={() => handleNavigation('/ai-dashboard')}
                     className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
                   >
                     <Brain className="w-4 h-4 mr-2" />
-                    Tableau de Bord IA
+                    IA Dashboard
                   </button>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -270,7 +172,7 @@ export function Navbar() {
                     className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
                   >
                     <Zap className="w-4 h-4 mr-2" />
-                    Fonctionnalités IA
+                    IA Features
                   </button>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -282,27 +184,10 @@ export function Navbar() {
                     Test IA
                   </button>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/ai-advanced')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    IA Avancée
-                  </button>
-                </DropdownMenuItem>
-                
-                <div className="px-2 py-2 border-t mt-1">
-                  <button
-                    onClick={() => handleNavigation('/features')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <BarChart3 className="w-4 h-4 mr-2" />
-                    Fonctionnalités
-                  </button>
-                </div>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <NavLink href="/features">Fonctionnalités</NavLink>
           </div>
 
           {/* User Menu / Auth Buttons */}
@@ -359,10 +244,10 @@ export function Navbar() {
                     <Button variant="ghost" className="flex items-center space-x-2 hover:bg-gray-100">
                       <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                         <span className="text-white font-medium text-sm">
-                          {user.name.charAt(0).toUpperCase()}
+                          {user.email.charAt(0).toUpperCase()}
                         </span>
                       </div>
-                      <span className="hidden sm:block text-gray-700">{user.name}</span>
+                      <span className="hidden sm:block text-gray-700">{user.email.split('@')[0]}</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -455,6 +340,7 @@ export function Navbar() {
                   </div>
 
                   <div className="py-4 space-y-1">
+                    {/* Main sections */}
                     <div className="px-2">
                       <MobileNavLink href="/marketplace" icon={Target}>
                         Missions
@@ -467,48 +353,35 @@ export function Navbar() {
                       </MobileNavLink>
                     </div>
                     
-                    {/* Mode Démo Section */}
-                    <div className="border-t border-gray-200 pt-4 mt-4">
-                      <div className="px-4 py-2">
-                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                          Mode Démo
-                        </span>
-                      </div>
-                      <div className="px-2">
-                        <MobileNavLink href="/demo/missions" icon={Target}>
-                          Missions démo
-                        </MobileNavLink>
-                        <MobileNavLink href="/demo/profils" icon={Users}>
-                          Profils démo
-                        </MobileNavLink>
-                        <MobileNavLink href="/demo/ia" icon={Brain}>
-                          IA en action
-                        </MobileNavLink>
-                      </div>
+                    {/* Demo & IA sections - now at main level */}
+                    <div className="px-2 mt-4">
+                      <MobileNavLink href="/demo/missions" icon={Target}>
+                        Missions Démo
+                      </MobileNavLink>
+                      <MobileNavLink href="/demo/profils" icon={Users}>
+                        Profils Démo
+                      </MobileNavLink>
+                      <MobileNavLink href="/demo/ia" icon={Brain}>
+                        IA en Action
+                      </MobileNavLink>
                     </div>
 
-                    {/* IA Features Section */}
-                    <div className="border-t border-gray-200 pt-4 mt-4">
-                      <div className="px-4 py-2">
-                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center">
-                          IA Features
-                          <Badge className="ml-2 bg-purple-100 text-purple-700 text-xs">NOUVEAU</Badge>
-                        </span>
-                      </div>
-                      <div className="px-2">
-                        <MobileNavLink href="/ai-dashboard" icon={Brain}>
+                    <div className="px-2 mt-2">
+                      <MobileNavLink href="/ai-dashboard" icon={Brain}>
+                        <span className="flex items-center justify-between w-full">
                           IA Dashboard
-                        </MobileNavLink>
-                        <MobileNavLink href="/ai-features" icon={Zap}>
-                          Fonctionnalités IA
-                        </MobileNavLink>
-                        <MobileNavLink href="/ai-test" icon={Search}>
-                          Test IA
-                        </MobileNavLink>
-                        <MobileNavLink href="/ai-advanced" icon={TrendingUp}>
-                          IA Avancée
-                        </MobileNavLink>
-                      </div>
+                          <Badge className="bg-purple-100 text-purple-700 text-xs">NOUVEAU</Badge>
+                        </span>
+                      </MobileNavLink>
+                      <MobileNavLink href="/ai-features" icon={Zap}>
+                        IA Features
+                      </MobileNavLink>
+                      <MobileNavLink href="/ai-test" icon={Search}>
+                        Test IA
+                      </MobileNavLink>
+                      <MobileNavLink href="/ai-advanced" icon={TrendingUp}>
+                        IA Avancée
+                      </MobileNavLink>
                     </div>
 
                     <div className="px-2 mt-4">
