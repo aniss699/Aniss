@@ -3,9 +3,12 @@ run = "npm run dev"
 
 [nix]
 channel = "stable-25_05"
+packages = ["postgresql"]
 
 [deployment]
-run = ["sh", "-c", "npm run dev"]
+run = ["npm", "run", "start"]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
 
 [[ports]]
 localPort = 5000
