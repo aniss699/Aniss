@@ -8,7 +8,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = parseInt(process.env.PORT || '5000', 10);
 
-// Middleware
+// Middleware anti-cache pour Replit
+app.use((req, res, next) => {
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    'X-Frame-Options': 'ALLOWALL'
+  });
+  next();
+});
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../dist/public')));
 
