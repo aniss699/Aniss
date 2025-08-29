@@ -113,32 +113,47 @@ export default function Home() {
         )}
       </div>
 
-      {/* Simplified Footer */}
+      {/* Footer complet avec toutes les pages */}
       <footer className="bg-gray-900 text-white mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center md:text-left">
             <div>
               <h3 className="text-lg font-semibold mb-3">Plateforme</h3>
               <ul className="space-y-2 text-sm">
-                <li><button onClick={() => setLocation(ROUTES.MARKETPLACE)} className="text-gray-300 hover:text-white transition-colors">Missions</button></li>
+                <li><button onClick={() => setLocation(ROUTES.HOME)} className="text-gray-300 hover:text-white transition-colors">Accueil</button></li>
+                <li><button onClick={() => setLocation(ROUTES.MARKETPLACE)} className="text-gray-300 hover:text-white transition-colors">Marketplace</button></li>
+                <li><button onClick={() => setLocation(ROUTES.SERVICES)} className="text-gray-300 hover:text-white transition-colors">Services</button></li>
                 <li><button onClick={() => setLocation('/available-providers')} className="text-gray-300 hover:text-white transition-colors">Prestataires</button></li>
-                <li><button onClick={() => setLocation(ROUTES.CREATE_MISSION)} className="text-gray-300 hover:text-white transition-colors">Créer une mission</button></li>
+                <li><button onClick={() => setLocation(ROUTES.FEATURES)} className="text-gray-300 hover:text-white transition-colors">Fonctionnalités</button></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-3">IA & Fonctionnalités</h3>
+              <h3 className="text-lg font-semibold mb-3">Démo & Test</h3>
               <ul className="space-y-2 text-sm">
-                <li><button onClick={() => setLocation('/ai-dashboard')} className="text-gray-300 hover:text-white transition-colors">Tableau de bord IA</button></li>
+                <li><button onClick={() => setLocation('/demo/profils')} className="text-gray-300 hover:text-white transition-colors">Profils Démo</button></li>
+                <li><button onClick={() => setLocation('/demo/ia')} className="text-gray-300 hover:text-white transition-colors">IA en Action</button></li>
+                <li><button onClick={() => setLocation('/demo/missions')} className="text-gray-300 hover:text-white transition-colors">Missions Démo</button></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-3">IA & Intelligence</h3>
+              <ul className="space-y-2 text-sm">
                 <li><button onClick={() => setLocation('/ai-features')} className="text-gray-300 hover:text-white transition-colors">Fonctionnalités IA</button></li>
-                <li><button onClick={() => setLocation('/features')} className="text-gray-300 hover:text-white transition-colors">Toutes les fonctionnalités</button></li>
+                <li><button onClick={() => setLocation('/ai-dashboard')} className="text-gray-300 hover:text-white transition-colors">Dashboard IA</button></li>
+                <li><button onClick={() => setLocation('/ai-advanced')} className="text-gray-300 hover:text-white transition-colors">IA Avancée</button></li>
+                <li><button onClick={() => setLocation('/ai-test')} className="text-gray-300 hover:text-white transition-colors">Test IA</button></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-3">Support</h3>
+              <h3 className="text-lg font-semibold mb-3">Mon Espace & Support</h3>
               <ul className="space-y-2 text-sm">
-                <li><button onClick={() => setLocation(ROUTES.LEGAL)} className="text-gray-300 hover:text-white transition-colors">Mentions légales</button></li>
-                <li><button onClick={() => setLocation(ROUTES.PROFILE)} className="text-gray-300 hover:text-white transition-colors">Mon profil</button></li>
+                <li><button onClick={() => setLocation('/login')} className="text-gray-300 hover:text-white transition-colors">Connexion</button></li>
                 <li><button onClick={() => setLocation(ROUTES.DASHBOARD)} className="text-gray-300 hover:text-white transition-colors">Tableau de bord</button></li>
+                <li><button onClick={() => setLocation(ROUTES.PROFILE)} className="text-gray-300 hover:text-white transition-colors">Mon profil</button></li>
+                <li><button onClick={() => setLocation(ROUTES.MISSIONS)} className="text-gray-300 hover:text-white transition-colors">Mes missions</button></li>
+                <li><button onClick={() => setLocation(ROUTES.CREATE_MISSION)} className="text-gray-300 hover:text-white transition-colors">Créer une mission</button></li>
+                <li><button onClick={() => setLocation(ROUTES.MESSAGES)} className="text-gray-300 hover:text-white transition-colors">Messages</button></li>
+                <li><button onClick={() => setLocation(ROUTES.LEGAL)} className="text-gray-300 hover:text-white transition-colors">Mentions légales</button></li>
               </ul>
             </div>
           </div>
