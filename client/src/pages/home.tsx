@@ -1,163 +1,20 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
-import type { Project } from '@shared/schema';
-import { MissionCard } from '@/components/missions/mission-card';
-import { MissionDetailModal } from '@/components/missions/mission-detail-modal';
+import { useLocation } from 'wouter';
+import { HeroSection } from '@/components/home/hero-section';
+import { ServiceTypeCards } from '@/components/home/service-type-cards';
 import { CategorySelector } from '@/components/missions/category-selector';
 import { QuickMissionCreator } from '@/components/missions/quick-mission-creator';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useLocation } from 'wouter';
-import { Link } from 'wouter';
-import { useAuth } from '@/hooks/use-auth';
-import { Progress } from '@/components/ui/progress';
-import { ArrowRight, Star, Users, CheckCircle, Zap, Globe, Shield, TrendingUp, Search, PlusCircle, Brain, Wand2, MessageSquare, Clock } from 'lucide-react';
 import { ROUTES } from '../routes/paths';
 
 export default function Home() {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    description: '',
-    location: '',
-    budget: '',
-  });
   const [selectedService, setSelectedService] = useState<'reverse-bidding' | 'direct-connection' | null>('reverse-bidding');
-  const [showMissionForm, setShowMissionForm] = useState(false);
-
-  // State for quick mission creation form
-  const [quickMission, setQuickMission] = useState({
-    title: '',
-    description: '',
-    budget: ''
-  });
-
-
-  const { data: missions = [] } = useQuery<Project[]>({
-    queryKey: ['/api/missions'],
-  });
-
-  const createMissionMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await apiRequest('POST', '/api/missions', data);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/missions'] });
-      toast({
-        title: 'Mission créée !',
-        description: 'Votre mission a été publiée avec succès',
-      });
-      setFormData({ description: '', location: '', budget: '' });
-      setSelectedCategory('');
-      setShowMissionForm(false);
-    },
-    onError: (error: any) => {
-      toast({
-        title: 'Erreur',
-        description: error.message || 'Une erreur est survenue',
-        variant: 'destructive',
-      });
-    },
-  });
-
-  const handleCreateMission = () => {
-    if (!user) {
-      toast({
-        title: 'Connexion requise',
-        description: 'Veuillez vous connecter pour créer une mission',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (!formData.description.trim()) {
-      toast({
-        title: 'Description requise',
-        description: 'Veuillez décrire votre besoin',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    const title = formData.description.length > 50 
-      ? formData.description.substring(0, 47) + '...' 
-      : formData.description;
-
-    createMissionMutation.mutate({
-      title,
-      description: formData.description,
-      category: selectedCategory || 'other',
-      budget: formData.budget || '0',
-      location: formData.location || 'Non spécifié',
-      clientId: user.id,
-      clientName: user.email.split('@')[0],
-    });
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setQuickMission(prev => ({ ...prev, [field]: value }));
-  };
-
-  const recentMissions = missions.slice(0, 6);
-
-  // Dummy AI analysis function and state for demonstration
-  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-
-  const analyzeWithAI = () => {
-    setIsAnalyzing(true);
-    // Simulate AI analysis
-    setTimeout(() => {
-      setAiAnalysis("Analyse IA: Le projet semble bien défini. Considérer l'ajout d'un budget détaillé.");
-      setIsAnalyzing(false);
-    }, 2000);
-  };
-
-  // Handler for the quick mission submission
-  const handleQuickSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
-      toast({
-        title: 'Connexion requise',
-        description: 'Veuillez vous connecter pour créer une mission',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (!quickMission.title || !quickMission.description) {
-      toast({
-        title: 'Champs requis',
-        description: 'Veuillez remplir le titre et la description',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // Rediriger vers la page de création avec les données préremplies
-    const params = new URLSearchParams({
-      title: quickMission.title,
-      description: quickMission.description,
-      budget: quickMission.budget
-    });
-    setLocation(`/create-mission?${params.toString()}`);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
         {/* User Type Toggle */}
         <div className="flex justify-center mb-8">
           <div className="bg-white rounded-full p-1 shadow-lg border border-gray-200">
@@ -186,128 +43,16 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Hero Section avec animations */}
-        <div className="text-center mb-12 sm:mb-16 relative px-2 sm:px-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-3xl blur-3xl"></div>
-          <div className="relative">
-            <div className="text-center space-y-6">
-              <div className="flex justify-center mb-4">
-                <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 text-sm font-medium">
-                  🚀 NOUVEAU : 12 Innovations IA Révolutionnaires
-                </Badge>
-              </div>
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-                Trouvez le <span className="text-blue-600">prestataire parfait</span> avec l'IA avancée
-              </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Plateforme française d'appels d'offres inversés avec 12 innovations IA : prédiction succès, pricing neural, trust blockchain, et workspace collaboratif.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center animate-fade-in-delay-2 text-sm sm:text-base mt-8">
-              <div className="flex items-center text-green-600 font-semibold">
-                <div className="w-3 h-3 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-                1,247+ projets réalisés
-              </div>
-              <div className="flex items-center text-blue-600 font-semibold">
-                <div className="w-3 h-3 bg-blue-400 rounded-full mr-2 animate-pulse"></div>
-                98% de satisfaction client
-              </div>
-            </div>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg">
-                    <Link href={ROUTES.MARKETPLACE}>
-                      Découvrir les missions
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" size="lg">
-                    <Link href={ROUTES.CREATE_MISSION}>
-                      Poster une mission
-                    </Link>
-                  </Button>
-              </div>
-          </div>
-        </div>
+        {/* Hero Section */}
+        <HeroSection />
 
-        {/* Service Types avec design amélioré */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 mb-12 sm:mb-16 px-2 sm:px-0">
-          <Card 
-            className={`p-4 sm:p-8 hover:shadow-2xl transition-all duration-500 transform hover:scale-105 border-0 shadow-xl cursor-pointer ${
-              selectedService === 'reverse-bidding' 
-                ? 'bg-gradient-to-br from-blue-50 to-blue-100 ring-2 ring-blue-400' 
-                : 'bg-gradient-to-br from-gray-50 to-gray-100 hover:from-blue-50 hover:to-blue-100'
-            }`}
-            onClick={() => setSelectedService('reverse-bidding')}
-          >
-            <div className="text-center">
-              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg transform transition-all duration-300 ${
-                selectedService === 'reverse-bidding' 
-                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 rotate-0' 
-                  : 'bg-gradient-to-r from-gray-400 to-gray-500 rotate-3 hover:rotate-0'
-              }`}>
-                <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-900">Appels d'offres</h3>
-              <p className="text-gray-700 mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
-                🎯 Décrivez votre projet et laissez les prestataires vous proposer leurs services. 
-                Comparez les offres et choisissez la meilleure.
-              </p>
-              <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-xl shadow-inner">
-                <div className="flex items-center justify-center space-x-2 sm:space-x-4 text-xs sm:text-sm text-gray-600">
-                  <div className="flex items-center">
-                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-blue-500" />
-                    <span className="hidden sm:inline">Réponse sous 2h</span>
-                    <span className="sm:hidden">2h</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-green-500" />
-                    <span className="hidden sm:inline">+50 prestataires</span>
-                    <span className="sm:hidden">+50 pros</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
+        {/* Service Type Cards */}
+        <ServiceTypeCards 
+          selectedService={selectedService}
+          onServiceSelect={setSelectedService}
+        />
 
-          <Card 
-            className={`p-4 sm:p-8 hover:shadow-2xl transition-all duration-500 transform hover:scale-105 border-0 shadow-xl cursor-pointer ${
-              selectedService === 'direct-connection' 
-                ? 'bg-gradient-to-br from-green-50 to-emerald-100 ring-2 ring-green-400' 
-                : 'bg-gradient-to-br from-gray-50 to-gray-100 hover:from-green-50 hover:to-emerald-100'
-            }`}
-            onClick={() => setSelectedService('direct-connection')}
-          >
-            <div className="text-center">
-              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg transform transition-all duration-300 ${
-                selectedService === 'direct-connection' 
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 rotate-0' 
-                  : 'bg-gradient-to-r from-gray-400 to-gray-500 -rotate-3 hover:rotate-0'
-              }`}>
-                <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-900">Mise en relation</h3>
-              <p className="text-gray-700 mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
-                ⚡ Contactez instantanément des professionnels qualifiés dans votre domaine. 
-                Idéal pour les projets urgents.
-              </p>
-              <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-xl shadow-inner">
-                <div className="flex items-center justify-center space-x-2 sm:space-x-4 text-xs sm:text-sm text-gray-600">
-                  <div className="flex items-center">
-                    <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-green-500" />
-                    <span className="hidden sm:inline">Contact immédiat</span>
-                    <span className="sm:hidden">Immédiat</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-yellow-500" />
-                    <span className="hidden sm:inline">Pros vérifiés</span>
-                    <span className="sm:hidden">Vérifiés</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Description adaptative selon le service sélectionné */}
+        {/* Service Content */}
         {selectedService && (
           <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-8 mb-12 max-w-6xl mx-auto">
             {selectedService === 'reverse-bidding' && (
@@ -316,12 +61,11 @@ export default function Home() {
                   <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
                     Quel est votre besoin ?
                   </h2>
-                  <p className="text-gray-600 text-sm sm:text-base">
+                  <p className="text-gray-600">
                     Sélectionnez votre domaine et décrivez votre projet
                   </p>
                 </div>
 
-                {/* Categories avec logos */}
                 <div className="mb-8">
                   <CategorySelector
                     selectedCategory={selectedCategory}
@@ -330,75 +74,8 @@ export default function Home() {
                   />
                 </div>
 
-                {/* Formulaire de description */}
-                <div className="space-y-4 max-w-4xl mx-auto">
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <label className="text-sm font-medium text-gray-700">Description du projet</label>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={analyzeWithAI}
-                        disabled={isAnalyzing}
-                        className="text-purple-600 border-purple-200 hover:bg-purple-50"
-                      >
-                        {isAnalyzing ? (
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-                            Analyse...
-                          </div>
-                        ) : (
-                          <>
-                            <Brain className="w-4 h-4 mr-2" />
-                            Analyser avec l'IA
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                    <Textarea
-                      placeholder="Décrivez votre projet en détail..."
-                      value={quickMission.description}
-                      onChange={(e) => setQuickMission({...quickMission, description: e.target.value})}
-                      className="min-h-[100px] text-base border-2 border-gray-200 focus:border-blue-400 rounded-xl"
-                    />
-                  </div>
-
-                  {/* Composant de création IA intégré */}
                 <div className="mt-6">
                   <QuickMissionCreator />
-                </div>
-
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Input
-                      type="text"
-                      placeholder="Localisation (optionnel)"
-                      value={quickMission.title}
-                      onChange={(e) => setQuickMission({...quickMission, title: e.target.value})}
-                      className="flex-1 text-sm sm:text-base"
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Budget estimé (€)"
-                      value={quickMission.budget}
-                      onChange={(e) => setQuickMission({...quickMission, budget: e.target.value})}
-                      className="flex-1 text-sm sm:text-base"
-                    />
-                  </div>
-
-                  <Button 
-                    onClick={handleQuickSubmit}
-                    type="button"
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all"
-                  >
-                    <PlusCircle className="w-5 h-5 mr-2" />
-                    Publier ma mission
-                    {aiAnalysis && (
-                      <Badge className="ml-2 bg-green-500">
-                        IA ✓
-                      </Badge>
-                    )}
-                  </Button>
                 </div>
               </div>
             )}
@@ -409,12 +86,11 @@ export default function Home() {
                   <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
                     Trouvez le bon professionnel
                   </h2>
-                  <p className="text-gray-600 text-sm sm:text-base">
+                  <p className="text-gray-600">
                     Sélectionnez votre domaine pour découvrir les experts disponibles
                   </p>
                 </div>
 
-                {/* Categories avec logos */}
                 <div className="mb-8">
                   <CategorySelector
                     selectedCategory={selectedCategory}
@@ -424,13 +100,12 @@ export default function Home() {
                 </div>
 
                 <div className="text-center">
-                  <Button 
+                  <button 
                     onClick={() => setLocation('/available-providers')}
-                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 sm:px-8 rounded-xl shadow-lg transform transition hover:scale-105 text-sm sm:text-base"
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition hover:scale-105"
                   >
-                    <Search className="w-5 h-5 mr-2" />
                     Explorer les profils
-                  </Button>
+                  </button>
                 </div>
               </div>
             )}
@@ -438,294 +113,37 @@ export default function Home() {
         )}
       </div>
 
-      {/* Footer - Plan du site */}
+      {/* Simplified Footer */}
       <footer className="bg-gray-900 text-white mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Platform */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
             <div>
-              <h3 className="text-lg font-semibold mb-4">Plateforme</h3>
-              <ul className="space-y-2">
-                <li><button onClick={() => {console.log('Navigation vers marketplace'); setLocation(ROUTES.MARKETPLACE);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Missions</button></li>
-                <li><button onClick={() => {console.log('Navigation vers providers'); setLocation('/available-providers');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Prestataires</button></li>
-                <li><button onClick={() => {console.log('Navigation vers services'); setLocation(ROUTES.SERVICES);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Services</button></li>
-                <li><button onClick={() => {console.log('Navigation vers create-mission'); setLocation(ROUTES.CREATE_MISSION);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Créer une mission</button></li>
+              <h3 className="text-lg font-semibold mb-3">Plateforme</h3>
+              <ul className="space-y-2 text-sm">
+                <li><button onClick={() => setLocation(ROUTES.MARKETPLACE)} className="text-gray-300 hover:text-white transition-colors">Missions</button></li>
+                <li><button onClick={() => setLocation('/available-providers')} className="text-gray-300 hover:text-white transition-colors">Prestataires</button></li>
+                <li><button onClick={() => setLocation(ROUTES.CREATE_MISSION)} className="text-gray-300 hover:text-white transition-colors">Créer une mission</button></li>
               </ul>
             </div>
-
-            {/* IA & Fonctionnalités */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">IA & Fonctionnalités</h3>
-              <ul className="space-y-2">
-                <li><button onClick={() => {console.log('Navigation vers ai-dashboard'); setLocation('/ai-dashboard');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Tableau de bord IA</button></li>
-                <li><button onClick={() => {console.log('Navigation vers ai-features'); setLocation('/ai-features');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Fonctionnalités IA</button></li>
-                <li><button onClick={() => {console.log('Navigation vers features'); setLocation('/features');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Toutes les fonctionnalités</button></li>
-                <li><button onClick={() => {console.log('Navigation vers ai-test'); setLocation('/ai-test');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Test IA</button></li>
+              <h3 className="text-lg font-semibold mb-3">IA & Fonctionnalités</h3>
+              <ul className="space-y-2 text-sm">
+                <li><button onClick={() => setLocation('/ai-dashboard')} className="text-gray-300 hover:text-white transition-colors">Tableau de bord IA</button></li>
+                <li><button onClick={() => setLocation('/ai-features')} className="text-gray-300 hover:text-white transition-colors">Fonctionnalités IA</button></li>
+                <li><button onClick={() => setLocation('/features')} className="text-gray-300 hover:text-white transition-colors">Toutes les fonctionnalités</button></li>
               </ul>
             </div>
-
-            {/* Mode Démo */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Mode Démo</h3>
-              <ul className="space-y-2">
-                <li><button onClick={() => {console.log('Navigation vers demo missions'); setLocation('/demo/missions');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Missions démo</button></li>
-                <li><button onClick={() => {console.log('Navigation vers demo profils'); setLocation('/demo/profils');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Profils démo</button></li>
-                <li><button onClick={() => {console.log('Navigation vers demo ia'); setLocation('/demo/ia');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">IA en action</button></li>
-              </ul>
-            </div>
-
-            {/* Support */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Support</h3>
-              <ul className="space-y-2">
-                <li><button onClick={() => {console.log('Navigation vers legal'); setLocation(ROUTES.LEGAL);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Mentions légales</button></li>
-                <li><button onClick={() => {console.log('Navigation vers profile'); setLocation(ROUTES.PROFILE);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Mon profil</button></li>
-                <li><button onClick={() => {console.log('Navigation vers dashboard'); setLocation(ROUTES.DASHBOARD);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Tableau de bord</button></li>
-                <li><button onClick={() => {console.log('Navigation vers messages'); setLocation(ROUTES.MESSAGES);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Messages</button></li>
+              <h3 className="text-lg font-semibold mb-3">Support</h3>
+              <ul className="space-y-2 text-sm">
+                <li><button onClick={() => setLocation(ROUTES.LEGAL)} className="text-gray-300 hover:text-white transition-colors">Mentions légales</button></li>
+                <li><button onClick={() => setLocation(ROUTES.PROFILE)} className="text-gray-300 hover:text-white transition-colors">Mon profil</button></li>
+                <li><button onClick={() => setLocation(ROUTES.DASHBOARD)} className="text-gray-300 hover:text-white transition-colors">Tableau de bord</button></li>
               </ul>
             </div>
           </div>
-
-          {/* Copyright */}
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-gray-400">
-              © 2024 AppelsPro. Plateforme d'appels d'offres inversés avec IA.
-            </p>
-          </div>
-        </div>
-      </footer>
-
-      {/* Demo Missions */}
-      <div className="mb-12 px-2 sm:px-0">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">
-          Missions en cours
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {recentMissions.map((mission) => (
-            <MissionCard
-              key={mission.id}
-              mission={{...mission, bids: []}}
-              onClick={() => setSelectedMissionId(mission.id)}
-            />
-          ))}
-        </div>
-        {missions.length > 6 && (
-          <div className="text-center mt-6 sm:mt-8">
-            <Button
-              onClick={() => setLocation(ROUTES.MARKETPLACE)}
-              className="bg-primary hover:bg-primary-dark text-white px-6 sm:px-8 py-3 rounded-xl font-semibold text-sm sm:text-base"
-            >
-              Voir toutes les missions
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* How it works */}
-      <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-3xl p-8 md:p-12 mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
-          Comment ça marche ?
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <span className="text-white font-bold text-xl">1</span>
-            </div>
-            <h3 className="text-xl font-semibold mb-3">Décrivez votre projet</h3>
-            <p className="text-gray-600">
-              Expliquez en détail votre besoin, votre budget et vos contraintes. Plus c'est précis, mieux c'est !
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <span className="text-white font-bold text-xl">2</span>
-            </div>
-            <h3 className="text-xl font-semibold mb-3">Recevez des offres</h3>
-            <p className="text-gray-600">
-              Les professionnels qualifiés vous envoient leurs propositions avec leurs tarifs et délais.
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <span className="text-white font-bold text-xl">3</span>
-            </div>
-            <h3 className="text-xl font-semibold mb-3">Choisissez le meilleur</h3>
-            <p className="text-gray-600">
-              Comparez les offres, consultez les profils et sélectionnez le professionnel qui vous convient.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Notre concept */}
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-8 md:p-12 mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Notre concept
-        </h2>
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-            AppelsPro révolutionne la mise en relation professionnelle en inversant le processus traditionnel. 
-            Fini les recherches interminables et les devis sur-évalués !
-          </p>
-          <div className="grid md:grid-cols-2 gap-8 mt-8">
-            <div className="bg-white rounded-xl p-6 shadow-md">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">🎯 Pour les clients</h3>
-              <p className="text-gray-600">
-                Décrivez votre projet en quelques minutes et laissez les professionnels venir à vous. 
-                Recevez plusieurs offres compétitives et choisissez celle qui vous convient le mieux.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-md">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">🚀 Pour les prestataires</h3>
-              <p className="text-gray-600">
-                Accédez à de nouvelles opportunités business sans prospection. Concentrez-vous sur votre métier 
-                et proposez vos services aux clients qui en ont vraiment besoin.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Statistics */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-          Nos chiffres clés
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">{missions.length}+</div>
-            <div className="text-gray-700 font-medium">Missions publiées</div>
-          </div>
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200 text-center">
-            <div className="text-3xl font-bold text-green-600 mb-2">
-              {missions.length * 3}+
-            </div>
-            <div className="text-gray-700 font-medium">Offres reçues</div>
-          </div>
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200 text-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2">24h</div>
-            <div className="text-gray-700 font-medium">Délai moyen de réponse</div>
-          </div>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Questions fréquentes
-        </h2>
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="border border-gray-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              💰 Est-ce que le service est gratuit ?
-            </h3>
-            <p className="text-gray-600">
-              Oui ! Publier un projet et recevoir des offres est entièrement gratuit pour les clients. 
-              Les prestataires peuvent également consulter les projets gratuitement.
-            </p>
-          </div>
-          <div className="border border-gray-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              ⏱️ Combien de temps pour recevoir des offres ?
-            </h3>
-            <p className="text-gray-600">
-              En moyenne, vous recevrez vos premières offres dans les 24h. 
-              Plus votre description est précise, plus les réponses seront rapides et pertinentes.
-            </p>
-          </div>
-          <div className="border border-gray-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              ✅ Comment vérifier la qualité des prestataires ?
-            </h3>
-            <p className="text-gray-600">
-              Chaque prestataire dispose d'un profil avec ses réalisations passées, ses évaluations clients 
-              et ses domaines d'expertise. Vous pouvez consulter ces informations avant de faire votre choix.
-            </p>
-          </div>
-          <div className="border border-gray-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              📝 Puis-je modifier mon projet après publication ?
-            </h3>
-            <p className="text-gray-600">
-              Oui, vous pouvez modifier la description de votre projet à tout moment depuis votre tableau de bord. 
-              Les prestataires seront notifiés des modifications importantes.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <MissionDetailModal
-        missionId={selectedMissionId}
-        isOpen={!!selectedMissionId}
-        onClose={() => setSelectedMissionId(null)}
-      />
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Logo et description */}
-            <div className="lg:col-span-1">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">AP</span>
-                </div>
-                <span className="text-xl font-bold">AppelsPro</span>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">
-                La plateforme d'appels d'offres inversés qui connecte clients et prestataires de services.
-              </p>
-            </div>
-
-            {/* Services */}
-            <div>
-              <h3 className="font-semibold mb-4">Services</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><button onClick={() => setLocation('/marketplace')} className="hover:text-white transition-colors">Marketplace</button></li>
-                <li><button onClick={() => setLocation('/available-providers')} className="hover:text-white transition-colors">Prestataires</button></li>
-                <li><button onClick={() => setLocation('/services/consultation')} className="hover:text-white transition-colors">Consultation</button></li>
-                <li><button onClick={() => setLocation('/services/formation')} className="hover:text-white transition-colors">Formation</button></li>
-                <li><button onClick={() => setLocation('/services/support')} className="hover:text-white transition-colors">Support</button></li>
-              </ul>
-            </div>
-
-            {/* IA et Innovation */}
-            <div>
-              <h3 className="font-semibold mb-4">IA & Innovation</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><button onClick={() => setLocation('/ai-dashboard')} className="hover:text-white transition-colors">Dashboard IA</button></li>
-                <li><button onClick={() => setLocation('/ai-features')} className="hover:text-white transition-colors">Fonctionnalités IA</button></li>
-                <li><button onClick={() => setLocation('/demo/ia')} className="hover:text-white transition-colors">IA en démo</button></li>
-                <li><button onClick={() => setLocation('/ai-advanced')} className="hover:text-white transition-colors">IA Avancée</button></li>
-              </ul>
-            </div>
-
-            {/* Mode Démo */}
-            <div>
-              <h3 className="font-semibold mb-4">Mode Démo</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><button onClick={() => setLocation('/demo/missions')} className="hover:text-white transition-colors">Missions démo</button></li>
-                <li><button onClick={() => setLocation('/demo/profils')} className="hover:text-white transition-colors">Profils démo</button></li>
-                <li><button onClick={() => setLocation('/features')} className="hover:text-white transition-colors">Fonctionnalités</button></li>
-                <li><button onClick={() => setLocation('/legal')} className="hover:text-white transition-colors">Mentions légales</button></li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Copyright */}
-          <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © 2024 AppelsPro. Tous droits réservés.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <button onClick={() => setLocation('/legal')} className="text-gray-400 hover:text-white text-sm transition-colors">
-                Confidentialité
-              </button>
-              <button onClick={() => setLocation('/legal')} className="text-gray-400 hover:text-white text-sm transition-colors">
-                CGU
-              </button>
-              <span className="text-gray-400 text-sm">Contact: hello@appelspro.fr</span>
-            </div>
+          <div className="border-t border-gray-800 mt-8 pt-6 text-center text-sm text-gray-400">
+            © 2024 AppelsPro. Tous droits réservés.
           </div>
         </div>
       </footer>
