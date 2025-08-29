@@ -113,9 +113,6 @@ export function BidResponseModal({ bidId, bidderName, isOpen, onClose }: BidResp
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl bg-white border shadow-lg">
         <DialogHeader>
-          <VisuallyHidden>
-            <DialogTitle>Candidature pour la mission</DialogTitle>
-          </VisuallyHidden>
           <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <MessageCircle className="w-6 h-6 text-blue-500" />
             Répondre à l'offre de {bidderName}

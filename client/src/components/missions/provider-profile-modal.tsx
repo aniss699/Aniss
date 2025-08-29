@@ -82,9 +82,9 @@ export function ProviderProfileModal({ providerId, providerName, isOpen, onClose
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <VisuallyHidden.Root>
-            <DialogTitle>Profil du prestataire</DialogTitle>
-          </VisuallyHidden.Root>
+          <DialogTitle asChild>
+            <VisuallyHidden>Profil du prestataire</VisuallyHidden>
+          </DialogTitle>
         </DialogHeader>
         <div className="p-6"></div>
 
