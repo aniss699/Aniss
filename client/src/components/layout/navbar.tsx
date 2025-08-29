@@ -239,7 +239,6 @@ export function Navbar() {
                   </div>
 
                   <div className="py-4 space-y-1">
-                    {/* Main sections */}
                     <div className="px-2">
                       <MobileNavLink href="/marketplace" icon={Target}>
                         Missions
@@ -250,10 +249,6 @@ export function Navbar() {
                       <MobileNavLink href="/services" icon={Briefcase}>
                         Services
                       </MobileNavLink>
-                    </div>
-                    
-                    {/* Demo & IA sections - now at main level */}
-                    <div className="px-2 mt-4">
                       <MobileNavLink href="/demo/missions" icon={Target}>
                         Missions Démo
                       </MobileNavLink>
@@ -263,9 +258,6 @@ export function Navbar() {
                       <MobileNavLink href="/demo/ia" icon={Brain}>
                         IA en Action
                       </MobileNavLink>
-                    </div>
-
-                    <div className="px-2 mt-2">
                       <MobileNavLink href="/ai-dashboard" icon={Brain}>
                         <span className="flex items-center justify-between w-full">
                           IA Dashboard
@@ -281,34 +273,29 @@ export function Navbar() {
                       <MobileNavLink href="/ai-advanced" icon={TrendingUp}>
                         IA Avancée
                       </MobileNavLink>
-                    </div>
-
-                    <div className="px-2 mt-4">
                       <MobileNavLink href="/features" icon={BarChart3}>
                         Fonctionnalités
                       </MobileNavLink>
+                      {user && (
+                        <>
+                          <MobileNavLink href="/dashboard" icon={BarChart3}>
+                            Dashboard
+                          </MobileNavLink>
+                          <MobileNavLink href="/profile" icon={User}>
+                            Mon Profil
+                          </MobileNavLink>
+                          <MobileNavLink href="/missions" icon={Briefcase}>
+                            Mes Missions
+                          </MobileNavLink>
+                          <MobileNavLink href="/messages" icon={MessageSquare}>
+                            Messages
+                          </MobileNavLink>
+                          <MobileNavLink href="/create-mission" icon={PlusCircle}>
+                            Créer une Mission
+                          </MobileNavLink>
+                        </>
+                      )}
                     </div>
-
-                    {/* User sections - visible when authenticated */}
-                    {user && (
-                      <div className="px-2 mt-4 border-t border-gray-200 pt-4">
-                        <MobileNavLink href="/dashboard" icon={BarChart3}>
-                          Dashboard
-                        </MobileNavLink>
-                        <MobileNavLink href="/profile" icon={User}>
-                          Mon Profil
-                        </MobileNavLink>
-                        <MobileNavLink href="/missions" icon={Briefcase}>
-                          Mes Missions
-                        </MobileNavLink>
-                        <MobileNavLink href="/messages" icon={MessageSquare}>
-                          Messages
-                        </MobileNavLink>
-                        <MobileNavLink href="/create-mission" icon={PlusCircle}>
-                          Créer une Mission
-                        </MobileNavLink>
-                      </div>
-                    )}
 
                     {/* Mobile quick mission creator button */}
                     <div className="mt-6 px-4">
