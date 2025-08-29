@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import type { MissionWithBids } from '@shared/schema';
+import type { Project } from '@shared/schema';
 import { MissionCard } from '@/components/missions/mission-card';
 import { MissionDetailModal } from '@/components/missions/mission-detail-modal';
 import { CategorySelector } from '@/components/missions/category-selector';
@@ -17,7 +17,7 @@ import { Link } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
 import { Progress } from '@/components/ui/progress';
 import { ArrowRight, Star, Users, CheckCircle, Zap, Globe, Shield, TrendingUp, Search, PlusCircle, Brain, Wand2, MessageSquare, Clock } from 'lucide-react';
-import { paths } from '../routes/paths';
+import { ROUTES } from '../routes/paths';
 
 export default function Home() {
   const { user } = useAuth();
@@ -43,7 +43,7 @@ export default function Home() {
   });
 
 
-  const { data: missions = [] } = useQuery<MissionWithBids[]>({
+  const { data: missions = [] } = useQuery<Project[]>({
     queryKey: ['/api/missions'],
   });
 
@@ -101,7 +101,7 @@ export default function Home() {
       budget: formData.budget || '0',
       location: formData.location || 'Non spécifié',
       clientId: user.id,
-      clientName: user.name,
+      clientName: user.email.split('@')[0],
     });
   };
 
@@ -215,12 +215,12 @@ export default function Home() {
             </div>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg">
-                    <Link href={paths.missions}>
+                    <Link href={ROUTES.MARKETPLACE}>
                       Découvrir les missions
                     </Link>
                   </Button>
                   <Button asChild variant="outline" size="lg">
-                    <Link href={paths.createMission}>
+                    <Link href={ROUTES.CREATE_MISSION}>
                       Poster une mission
                     </Link>
                   </Button>
@@ -425,7 +425,7 @@ export default function Home() {
 
                 <div className="text-center">
                   <Button 
-                    onClick={() => setLocation(paths.availableProviders)}
+                    onClick={() => setLocation('/available-providers')}
                     className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 sm:px-8 rounded-xl shadow-lg transform transition hover:scale-105 text-sm sm:text-base"
                   >
                     <Search className="w-5 h-5 mr-2" />
@@ -446,10 +446,10 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Plateforme</h3>
               <ul className="space-y-2">
-                <li><button onClick={() => {console.log('Navigation vers marketplace'); setLocation(paths.marketplace);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Missions</button></li>
-                <li><button onClick={() => {console.log('Navigation vers providers'); setLocation(paths.availableProviders);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Prestataires</button></li>
-                <li><button onClick={() => {console.log('Navigation vers services'); setLocation(paths.services);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Services</button></li>
-                <li><button onClick={() => {console.log('Navigation vers create-mission'); setLocation(paths.createMission);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Créer une mission</button></li>
+                <li><button onClick={() => {console.log('Navigation vers marketplace'); setLocation(ROUTES.MARKETPLACE);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Missions</button></li>
+                <li><button onClick={() => {console.log('Navigation vers providers'); setLocation('/available-providers');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Prestataires</button></li>
+                <li><button onClick={() => {console.log('Navigation vers services'); setLocation(ROUTES.SERVICES);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Services</button></li>
+                <li><button onClick={() => {console.log('Navigation vers create-mission'); setLocation(ROUTES.CREATE_MISSION);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Créer une mission</button></li>
               </ul>
             </div>
 
@@ -457,10 +457,10 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-semibold mb-4">IA & Fonctionnalités</h3>
               <ul className="space-y-2">
-                <li><button onClick={() => {console.log('Navigation vers ai-dashboard'); setLocation(paths.aiDashboard);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Tableau de bord IA</button></li>
-                <li><button onClick={() => {console.log('Navigation vers ai-features'); setLocation(paths.aiFeatures);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Fonctionnalités IA</button></li>
-                <li><button onClick={() => {console.log('Navigation vers features'); setLocation(paths.features);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Toutes les fonctionnalités</button></li>
-                <li><button onClick={() => {console.log('Navigation vers ai-test'); setLocation(paths.aiTest);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Test IA</button></li>
+                <li><button onClick={() => {console.log('Navigation vers ai-dashboard'); setLocation('/ai-dashboard');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Tableau de bord IA</button></li>
+                <li><button onClick={() => {console.log('Navigation vers ai-features'); setLocation('/ai-features');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Fonctionnalités IA</button></li>
+                <li><button onClick={() => {console.log('Navigation vers features'); setLocation('/features');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Toutes les fonctionnalités</button></li>
+                <li><button onClick={() => {console.log('Navigation vers ai-test'); setLocation('/ai-test');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Test IA</button></li>
               </ul>
             </div>
 
@@ -468,9 +468,9 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Mode Démo</h3>
               <ul className="space-y-2">
-                <li><button onClick={() => {console.log('Navigation vers demo missions'); setLocation(paths.demoMissions);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Missions démo</button></li>
-                <li><button onClick={() => {console.log('Navigation vers demo profils'); setLocation(paths.demoProfiles);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Profils démo</button></li>
-                <li><button onClick={() => {console.log('Navigation vers demo ia'); setLocation(paths.demoIA);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">IA en action</button></li>
+                <li><button onClick={() => {console.log('Navigation vers demo missions'); setLocation('/demo/missions');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Missions démo</button></li>
+                <li><button onClick={() => {console.log('Navigation vers demo profils'); setLocation('/demo/profils');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Profils démo</button></li>
+                <li><button onClick={() => {console.log('Navigation vers demo ia'); setLocation('/demo/ia');}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">IA en action</button></li>
               </ul>
             </div>
 
@@ -478,10 +478,10 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Support</h3>
               <ul className="space-y-2">
-                <li><button onClick={() => {console.log('Navigation vers legal'); setLocation(paths.legal);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Mentions légales</button></li>
-                <li><button onClick={() => {console.log('Navigation vers profile'); setLocation(paths.profile);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Mon profil</button></li>
-                <li><button onClick={() => {console.log('Navigation vers dashboard'); setLocation(paths.dashboard);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Tableau de bord</button></li>
-                <li><button onClick={() => {console.log('Navigation vers messages'); setLocation(paths.messages);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Messages</button></li>
+                <li><button onClick={() => {console.log('Navigation vers legal'); setLocation(ROUTES.LEGAL);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Mentions légales</button></li>
+                <li><button onClick={() => {console.log('Navigation vers profile'); setLocation(ROUTES.PROFILE);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Mon profil</button></li>
+                <li><button onClick={() => {console.log('Navigation vers dashboard'); setLocation(ROUTES.DASHBOARD);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Tableau de bord</button></li>
+                <li><button onClick={() => {console.log('Navigation vers messages'); setLocation(ROUTES.MESSAGES);}} className="text-gray-300 hover:text-white transition-colors cursor-pointer hover:underline">Messages</button></li>
               </ul>
             </div>
           </div>
@@ -504,7 +504,7 @@ export default function Home() {
           {recentMissions.map((mission) => (
             <MissionCard
               key={mission.id}
-              mission={mission}
+              mission={{...mission, bids: []}}
               onClick={() => setSelectedMissionId(mission.id)}
             />
           ))}
@@ -512,7 +512,7 @@ export default function Home() {
         {missions.length > 6 && (
           <div className="text-center mt-6 sm:mt-8">
             <Button
-              onClick={() => setLocation(paths.marketplace)}
+              onClick={() => setLocation(ROUTES.MARKETPLACE)}
               className="bg-primary hover:bg-primary-dark text-white px-6 sm:px-8 py-3 rounded-xl font-semibold text-sm sm:text-base"
             >
               Voir toutes les missions
@@ -598,7 +598,7 @@ export default function Home() {
           </div>
           <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200 text-center">
             <div className="text-3xl font-bold text-green-600 mb-2">
-              {missions.reduce((acc, mission) => acc + mission.bids.length, 0)}+
+              {missions.length * 3}+
             </div>
             <div className="text-gray-700 font-medium">Offres reçues</div>
           </div>
