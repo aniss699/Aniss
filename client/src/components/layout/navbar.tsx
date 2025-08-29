@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { useAuth } from '@/hooks/use-auth';
 import { ROUTES } from '@/routes/paths';
-import { User, LogOut, Menu, X, Briefcase, Users, BarChart3, Target, Brain, MessageSquare, Search, Zap, TrendingUp, Plus, MonitorPlay, ChevronDown } from 'lucide-react';
+import { User, LogOut, Menu, X, Briefcase, Users, BarChart3, Target, Brain, MessageSquare, Search, Zap, TrendingUp, Plus, MonitorPlay, ChevronDown, PlusCircle } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -288,6 +288,27 @@ export function Navbar() {
                         Fonctionnalités
                       </MobileNavLink>
                     </div>
+
+                    {/* User sections - visible when authenticated */}
+                    {user && (
+                      <div className="px-2 mt-4 border-t border-gray-200 pt-4">
+                        <MobileNavLink href="/dashboard" icon={BarChart3}>
+                          Dashboard
+                        </MobileNavLink>
+                        <MobileNavLink href="/profile" icon={User}>
+                          Mon Profil
+                        </MobileNavLink>
+                        <MobileNavLink href="/missions" icon={Briefcase}>
+                          Mes Missions
+                        </MobileNavLink>
+                        <MobileNavLink href="/messages" icon={MessageSquare}>
+                          Messages
+                        </MobileNavLink>
+                        <MobileNavLink href="/create-mission" icon={PlusCircle}>
+                          Créer une Mission
+                        </MobileNavLink>
+                      </div>
+                    )}
 
                     {/* Mobile quick mission creator button */}
                     <div className="mt-6 px-4">
