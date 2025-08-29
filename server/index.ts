@@ -1,6 +1,8 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createServer } from 'http';
+import { setupVite, serveStatic, log } from './vite.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +22,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../dist/public')));
 
 // Import auth routes
 import authRoutes from './auth-routes.js';
@@ -2589,22 +2590,33 @@ try {
   console.warn('⚠️ Advanced AI routes registration failed:', error);
 }
 
-// Serve React app for all other routes
-app.get('*', (req, res) => {
-  try {
-    const indexPath = path.join(__dirname, '../dist/public/index.html');
-    res.sendFile(indexPath);
-  } catch (error) {
-    console.error('Error serving index.html:', error);
-    res.status(500).send('<!DOCTYPE html><html><body><h1>AppelsPro Loading...</h1><script>window.location.reload()</script></body></html>');
-  }
-});
+// Note: Vite middleware will handle frontend routing
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 AppelsPro server running on http://0.0.0.0:${port}`);
-  console.log(`📱 Frontend: http://0.0.0.0:${port}`);
-  console.log(`🔧 API Health: http://0.0.0.0:${port}/api/health`);
-}).on('error', (err) => {
-  console.error('❌ Server failed to start:', err.message);
+// Démarrer le serveur avec intégration Vite
+async function startServer() {
+  const server = createServer(app);
+
+  if (process.env.NODE_ENV !== 'production') {
+    // Mode développement : utiliser Vite middleware
+    await setupVite(app, server);
+    log("Vite middleware configured for development");
+  } else {
+    // Mode production : servir fichiers statiques
+    serveStatic(app);
+    log("Static files served for production");
+  }
+
+  server.listen(port, '0.0.0.0', () => {
+    console.log(`🚀 AppelsPro server running on http://0.0.0.0:${port}`);
+    console.log(`📱 Frontend: http://0.0.0.0:${port}`);
+    console.log(`🔧 API Health: http://0.0.0.0:${port}/api/health`);
+  }).on('error', (err) => {
+    console.error('❌ Server failed to start:', err.message);
+    process.exit(1);
+  });
+}
+
+startServer().catch(err => {
+  console.error('Failed to start server:', err);
   process.exit(1);
 });
