@@ -1,0 +1,157 @@
+Mets en place un pré-lancement automatique pour Vite afin de fiabiliser la Preview.
+Objectif : exécuter un script “preflight” avant chaque npm run dev qui :
+	1.	nettoie le cache utile si nécessaire,
+	2.	vérifie la config Vite (allowedHosts),
+	3.	contrôle les versions/outils et les erreurs types (TS, imports…),
+	4.	relance proprement le serveur.
+
+Modifs à faire
+
+1) Créer scripts/prepreview.sh
+
+Contenu exact :
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🔎 Preflight preview…"
+
+# 1) Node >= 18
+if command -v node >/dev/null 2>&1; then
+  NODE_MAJ=$(node -p "process.versions.node.split('.')[0]")
+  if [ "$NODE_MAJ" -lt 18 ]; then
+    echo "❌ Node < 18 détecté. Merci d’installer Node 18+."
+    exit 1
+  fi
+else
+  echo "❌ Node non trouvé."
+  exit 1
+fi
+
+# 2) Installer deps si node_modules absent/incomplet
+if [ ! -d node_modules ]; then
+  echo "📦 Installation des dépendances…"
+  npm install
+fi
+
+# 3) Nettoyage cache conditionnel si lockfile changé
+mkdir -p .cache
+HASH_NOW=""
+if [ -f package-lock.json ]; then HASH_NOW=$(sha256sum package-lock.json | awk '{print $1}'); fi
+if [ -f yarn.lock ]; then HASH_NOW=$(sha256sum yarn.lock | awk '{print $1}'); fi
+if [ -f pnpm-lock.yaml ]; then HASH_NOW=$(sha256sum pnpm-lock.yaml | awk '{print $1}'); fi
+
+if [ -n "$HASH_NOW" ]; then
+  if [ ! -f .cache/lock.hash ] || [ "$(cat .cache/lock.hash)" != "$HASH_NOW" ]; then
+    echo "🧹 Lockfile modifié → purge caches Vite."
+    rm -rf node_modules/.vite .vite dist
+    echo "$HASH_NOW" > .cache/lock.hash
+  fi
+fi
+
+# 4) Vérifier vite.config.js: allowedHosts
+if [ -f vite.config.js ]; then
+  if ! grep -q "allowedHosts" vite.config.js; then
+    echo "⚙️ Ajout de server.allowedHosts à vite.config.js"
+    # Injection minimaliste non destructive : ajoute un bloc server s’il n’existe pas
+    node - <<'JS'
+const fs = require('fs');
+let s = fs.readFileSync('vite.config.js','utf8');
+if(!/server\s*:\s*\{[^}]*\}/s.test(s)){
+  s = s.replace(/export default defineConfig\(\{?/,'export default defineConfig({\n  server: { allowedHosts: [".replit.dev"] },');
+}else if(!/allowedHosts/.test(s)){
+  s = s.replace(/server\s*:\s*\{([\s\S]*?)\}/, (m, inner) => `server: { ${inner.trim().replace(/,+$/,'')}, allowedHosts: [".replit.dev"] }`);
+}
+fs.writeFileSync('vite.config.js', s);
+console.log('vite.config.js mis à jour');
+JS
+  fi
+fi
+
+# 5) Vérifs de base (silencieuses si non installées)
+if npx --yes tsc --version >/dev/null 2>&1; then
+  echo "🧪 TypeScript check…"
+  npx --yes tsc --noEmit || { echo "❌ Erreurs TypeScript"; exit 1; }
+fi
+
+# 6) Détection d’imports cassés via esbuild (rapide) si présent
+if npx --yes esbuild --version >/dev/null 2>&1; then
+  if [ -f src/main.tsx ] || [ -f src/main.ts ]; then ENTRY=$( [ -f src/main.tsx ] && echo src/main.tsx || echo src/main.ts ); else ENTRY=src/index.tsx; fi
+  if [ -f "$ENTRY" ]; then
+    echo "🔗 Check imports (esbuild)…"
+    npx --yes esbuild "$ENTRY" --bundle --platform=browser --outfile=/dev/null || { echo "❌ Import cassé"; exit 1; }
+  fi
+fi
+
+# 7) Purge HMR zombie
+pkill -f "vite" >/dev/null 2>&1 || true
+
+echo "✅ Preflight OK"
+
+2) Créer scripts/run-dev.sh
+
+Contenu exact :
+
+#!/usr/bin/env bash
+set -euo pipefail
+bash scripts/prepreview.sh
+# Relance Vite en mode dev
+if npx --yes vite --version >/dev/null 2>&1; then
+  npx --yes vite
+else
+  npm run dev-original
+fi
+
+3) Mettre les deux scripts exécutables
+
+chmod +x scripts/prepreview.sh scripts/run-dev.sh
+
+4) Mettre à jour package.json
+	•	Sauvegarder l’ancien script dev sous dev-original si besoin
+	•	Forcer l’exécution du préflight avant chaque preview/dev
+
+{
+  "scripts": {
+    "dev-original": "vite",
+    "predev": "bash scripts/prepreview.sh",
+    "dev": "bash scripts/run-dev.sh",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
+
+predev est un hook npm standard : il s’exécute automatiquement avant npm run dev.
+dev passe par run-dev.sh pour garantir que le préflight tourne même si la preview Replit ne déclenche pas le hook correctement.
+
+5) (Optionnel) ESLint auto s’il est présent
+
+Si eslint est installé, ajoute dans package.json :
+
+{
+  "scripts": {
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+  }
+}
+
+Et dans scripts/prepreview.sh, juste avant le “✅ Preflight OK” :
+
+if npx --yes eslint --version >/dev/null 2>&1; then
+  echo "🧹 Lint…"
+  npx --yes eslint . --ext .js,.jsx,.ts,.tsx || true
+fi
+
+6) Mettre à jour .replit (si nécessaire)
+
+Assure que la commande de run utilise npm run dev :
+
+run = "npm run dev"
+
+
+⸻
+
+Critères d’acceptation
+	•	Lancer npm run dev exécute toujours le préflight.
+	•	Si package-lock/yarn.lock/pnpm-lock.yaml change, les caches Vite sont purgés automatiquement.
+	•	vite.config.js contient server.allowedHosts: ['.replit.dev'] si absent.
+	•	Les erreurs TypeScript/imports cassés bloquent le lancement avec un message clair.
+	•	Le serveur Vite se relance proprement sans processus zombie.

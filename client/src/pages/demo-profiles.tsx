@@ -222,16 +222,18 @@ export default function DemoProfiles() {
                 </div>
 
                 {/* Recent Work */}
-                <div>
-                  <p className="text-xs font-medium text-gray-700 mb-2">Travaux récents:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {profile.recentWork.map((work, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {work}
-                      </Badge>
-                    ))}
+                {profile.skills.length > 3 && (
+                  <div>
+                    <p className="text-xs font-medium text-gray-700 mb-2">Spécialisations:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {profile.skills.slice(0, 3).map((skill, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-2">

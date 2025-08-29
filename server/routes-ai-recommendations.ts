@@ -341,7 +341,12 @@ async function generatePageSuggestions(page: string, userContext: any) {
         action: 'Voir l\'analyse',
         icon: 'TrendingUp',
         priority: 'medium'
-
+      });
+      break;
+  }
+  
+  return suggestions;
+}
 
 // Fonctions d'analyse IA
 function calculateProfileCompleteness(profile: any, userType: string) {
@@ -721,24 +726,6 @@ function generateProactiveStepSuggestions(stepId: string, formData: any, userTyp
     });
   }
 
-  return suggestions;
-}
-
-      });
-      break;
-      
-    case 'profile':
-      suggestions.push({
-        type: 'optimization',
-        title: 'Optimisez votre profil avec l\'IA',
-        description: 'Notre IA peut analyser et améliorer votre profil pour +40% de visibilité',
-        action: 'Analyser mon profil',
-        icon: 'User',
-        priority: 'high'
-      });
-      break;
-  }
-  
   return suggestions;
 }
 
