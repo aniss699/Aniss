@@ -249,9 +249,6 @@ export function Navbar() {
                       <MobileNavLink href="/services" icon={Briefcase}>
                         Services
                       </MobileNavLink>
-                      <MobileNavLink href="/demo/missions" icon={Target}>
-                        Missions Démo
-                      </MobileNavLink>
                       <MobileNavLink href="/demo/profils" icon={Users}>
                         Profils Démo
                       </MobileNavLink>
@@ -272,9 +269,6 @@ export function Navbar() {
                       </MobileNavLink>
                       <MobileNavLink href="/ai-advanced" icon={TrendingUp}>
                         IA Avancée
-                      </MobileNavLink>
-                      <MobileNavLink href="/features" icon={BarChart3}>
-                        Fonctionnalités
                       </MobileNavLink>
                       {user && (
                         <>
