@@ -1,65 +1,125 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, MapPin, Clock, CheckCircle, Award, TrendingUp } from 'lucide-react';
+import { Star, MapPin, Clock, CheckCircle, Award, TrendingUp, Users, Briefcase, Phone, Globe } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
-const demoProfiles = [
-  {
-    id: 1,
-    name: "Sophie Dubois",
-    role: "Développeuse Full-Stack",
-    location: "Paris, France",
-    rating: 4.9,
-    reviewCount: 127,
-    completedProjects: 89,
-    responseTime: "< 2h",
-    skills: ["React", "Node.js", "TypeScript", "MongoDB"],
-    hourlyRate: "45-65 €/h",
-    availability: "Disponible",
-    verified: true,
-    topRated: true,
-    description: "Spécialisée dans le développement d'applications web modernes avec React et Node.js. 5 ans d'expérience en développement full-stack.",
-    recentWork: ["E-commerce Shopify", "Dashboard Analytics", "API REST"]
-  },
-  {
-    id: 2,
-    name: "Marc Leroy",
-    role: "Designer UX/UI",
-    location: "Lyon, France",
-    rating: 4.8,
-    reviewCount: 93,
-    completedProjects: 156,
-    responseTime: "< 4h",
-    skills: ["Figma", "Adobe XD", "Prototyping", "User Research"],
-    hourlyRate: "40-55 €/h",
-    availability: "Occupé jusqu'au 15/02",
-    verified: true,
-    topRated: false,
-    description: "Designer UX/UI passionné par la création d'expériences utilisateur intuitives et engageantes. Expertise en design thinking.",
-    recentWork: ["App Mobile Fintech", "Site E-commerce", "SaaS Dashboard"]
-  },
-  {
-    id: 3,
-    name: "Julie Martin",
-    role: "Consultante Marketing Digital",
-    location: "Marseille, France",
-    rating: 4.7,
-    reviewCount: 64,
-    completedProjects: 78,
-    responseTime: "< 1h",
-    skills: ["SEO", "Google Ads", "Social Media", "Analytics"],
-    hourlyRate: "35-50 €/h",
-    availability: "Disponible",
-    verified: true,
-    topRated: true,
-    description: "Experte en marketing digital avec une approche data-driven. Spécialisée dans l'acquisition et la conversion.",
-    recentWork: ["Campagne Google Ads", "Stratégie SEO", "Social Media Management"]
-  }
-];
+interface DemoProvider {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  rating_mean: string;
+  rating_count: number;
+  profile_data: any;
+  created_at: string;
+}
 
 export default function DemoProfiles() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['/api/demo-providers'],
+    queryFn: async () => {
+      const response = await fetch('/api/demo-providers');
+      if (!response.ok) {
+        throw new Error('Erreur lors du chargement des prestataires');
+      }
+      return response.json();
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Chargement des profils...</h1>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1,2,3].map(i => (
+              <Card key={i} className="animate-pulse">
+                <CardHeader>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-24"></div>
+                      <div className="h-3 bg-gray-200 rounded w-20"></div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-red-600 mb-4">Erreur de chargement</h1>
+            <p className="text-gray-600">Impossible de charger les profils de prestataires.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const providers: DemoProvider[] = data?.providers || [];
+
+  const formatProvider = (provider: DemoProvider) => {
+    const profileData = provider.profile_data || {};
+    return {
+      id: provider.id,
+      name: provider.name || 'Nom non disponible',
+      role: getRoleDisplay(provider.role),
+      location: profileData.location || 'Location non spécifiée',
+      rating: parseFloat(provider.rating_mean || '0'),
+      reviewCount: provider.rating_count || 0,
+      completedProjects: profileData.completed_projects || 0,
+      responseTime: `${profileData.response_time_hours || 'N/A'}h`,
+      skills: profileData.specialties || [],
+      hourlyRate: profileData.hourly_rate ? `${profileData.hourly_rate}€/h` : 'Tarif à discuter',
+      availability: profileData.availability || 'Non spécifié',
+      verified: true,
+      topRated: parseFloat(provider.rating_mean || '0') >= 4.5,
+      description: getDescriptionFromRole(provider.role, profileData),
+      phone: profileData.phone || null,
+      portfolio: profileData.portfolio_url || null,
+      linkedin: profileData.linkedin || null,
+      experienceYears: profileData.experience_years || null,
+      successRate: profileData.success_rate || null,
+      email: provider.email
+    };
+  };
+
+  const getRoleDisplay = (role: string) => {
+    switch(role) {
+      case 'PRO': return 'Prestataire Expert';
+      case 'CLIENT': return 'Client';
+      case 'ADMIN': return 'Administrateur';
+      default: return role;
+    }
+  };
+
+  const getDescriptionFromRole = (role: string, profileData: any) => {
+    if (role === 'PRO') {
+      const exp = profileData.experience_years;
+      const projects = profileData.completed_projects;
+      const skills = profileData.specialties || [];
+      
+      return `Prestataire expert avec ${exp || 'plusieurs'} années d'expérience. ${projects ? `${projects} projets réalisés.` : ''} Spécialisé en : ${skills.slice(0, 3).join(', ')}.`;
+    }
+    return 'Professionnel expérimenté sur la plateforme AppelsPro.';
+  };
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,7 +146,9 @@ export default function DemoProfiles() {
 
         {/* Profiles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {demoProfiles.map((profile) => (
+          {providers.map((providerData) => {
+            const profile = formatProvider(providerData);
+            return (
             <Card key={profile.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -182,7 +244,38 @@ export default function DemoProfiles() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
+        </div>
+
+        {/* Additional info section for real data */}
+        {providers.length > 0 && (
+          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <CheckCircle className="w-6 h-6 text-blue-600" />
+              <h3 className="text-lg font-semibold text-blue-900">
+                Données Réelles de la Base
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-blue-600" />
+                <span><strong>{providers.length}</strong> prestataires chargés</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-blue-600" />
+                <span>Notes moyennes réelles</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-blue-600" />
+                <span>Profils complets avec spécialités</span>
+              </div>
+            </div>
+            <p className="mt-3 text-blue-700 text-sm">
+              Ces profils sont tirés directement de la base de données PostgreSQL avec toutes les informations réelles saisies lors de la création des comptes démo.
+            </p>
+          </div>
+        )}
         </div>
 
         {/* Call to Action */}
