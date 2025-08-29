@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from '../components/ui/alert';
 import { Separator } from '../components/ui/separator';
 import { Brain, Wand2, CheckCircle, AlertCircle, Loader2, Euro, Calendar, Target } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
-import { paths } from '../routes/paths';
+import { ROUTES } from '../routes/paths';
 import { BriefEnhancer } from "@/components/ai/brief-enhancer";
 import { TextCompletionAssistant } from '@/components/ai/text-completion-assistant';
 

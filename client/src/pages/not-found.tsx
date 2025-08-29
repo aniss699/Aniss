@@ -2,17 +2,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Home, ArrowLeft, Search, Plus } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { paths } from "@/routes/paths";
+import { ROUTES } from "@/routes/paths";
 
 export default function NotFound() {
   const [location] = useLocation();
 
   const popularPages = [
-    { path: paths.home, label: 'Accueil', icon: Home },
-    { path: paths.marketplace, label: 'Missions', icon: Search },
-    { path: paths.createMission, label: 'Créer mission', icon: Plus },
-    { path: paths.availableProviders, label: 'Prestataires', icon: Search },
-    { path: paths.dashboard, label: 'Dashboard', icon: Home },
+    { path: ROUTES.HOME, label: 'Accueil', icon: Home },
+    { path: ROUTES.MARKETPLACE, label: 'Missions', icon: Search },
+    { path: ROUTES.CREATE_MISSION, label: 'Créer mission', icon: Plus },
+    { path: ROUTES.MARKETPLACE, label: 'Prestataires', icon: Search },
+    { path: ROUTES.DASHBOARD, label: 'Dashboard', icon: Home },
   ];
 
   return (
@@ -31,7 +31,7 @@ export default function NotFound() {
 
           <div className="mt-6 flex gap-2">
             <Button asChild variant="default">
-              <Link href={paths.home}>
+              <Link href={ROUTES.HOME}>
                 <Home className="h-4 w-4 mr-2" />
                 Accueil
               </Link>

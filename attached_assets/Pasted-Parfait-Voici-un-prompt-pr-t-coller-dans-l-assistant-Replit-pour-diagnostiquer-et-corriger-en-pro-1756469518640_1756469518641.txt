@@ -1,0 +1,138 @@
+Parfait. Voici un prompt prêt à coller dans l’assistant Replit pour diagnostiquer et corriger en profondeur les problèmes de preview (cache, rebuild, Vite/HMR, host, 404 SPA…), avec vérifs et plans B. Tu peux le coller tel quel.
+
+⸻
+
+PROMPT REPLIT — “Fix Preview Vite/React de A à Z”
+
+Objectif :
+Diagnostiquer et corriger tout ce qui empêche la preview d’afficher mes dernières modifications (cache, rebuild incomplet, HMR, host Replit bloqué, mauvais port/hôte, 404 SPA, service worker, dépendances manquantes). Fais toutes les étapes ci-dessous et confirme chaque action par un court résumé + capture de logs/erreurs si besoin.
+
+1) Check rapide & reset propre
+	•	Arrête le serveur en cours (kill du process dev si nécessaire).
+	•	Vide le cache Vite et les modules :
+	•	Supprime .vite/, node_modules/.vite/, dist/, et .cache/ s’ils existent.
+	•	Exécute :
+
+rm -rf node_modules pnpm-lock.yaml package-lock.json yarn.lock
+npm cache verify
+npm i
+
+
+	•	Cherche et désactive tout Service Worker (PWA) pendant le dev :
+	•	Si serviceWorker.register(...) existe, commente-le.
+	•	Si Workbox/PWA plugin est présent, désactive-le en dev.
+	•	Redémarre la preview après corrections, mais ne lance pas encore le serveur (on corrige la config d’abord).
+
+2) Vite + React : présence & versions
+	•	Vérifie que React plugin est bien installé et référencé :
+	•	Dépendance : @vitejs/plugin-react (ou @vitejs/plugin-react-swc)
+	•	Si manquant : npm i -D @vitejs/plugin-react
+	•	Ouvre vite.config.ts ou vite.config.js et applique exactement cette config (adapter TS/JS selon le fichier). Crée le fichier si absent.
+
+// vite.config.ts (ou .js)
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    host: '0.0.0.0',
+    port: Number(process.env.PORT) || 5173,
+    strictPort: true,
+    allowedHosts: ['.replit.dev'], // autorise tous les sous-domaines Replit
+    hmr: {
+      clientPort: 443, // HMR fiable derrière proxy HTTPS Replit
+    },
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    },
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: Number(process.env.PORT) || 5173,
+    strictPort: true,
+  },
+})
+
+	•	Assure-toi que base n’est pas défini inutilement (laisser par défaut) pour éviter des chemins cassés en dev.
+
+3) Scripts + .replit
+	•	Dans package.json, normalise les scripts :
+
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
+
+	•	Vérifie le fichier .replit (ou replit.nix). Il doit lancer npm run dev et utiliser $PORT :
+
+run = "npm run dev"
+
+(ou mets l’équivalent si tu utilises Nix; l’essentiel est que la commande npm run dev soit lancée et écoute sur 0.0.0.0:$PORT conformément à la config Vite ci-dessus.)
+
+4) SPA / Router (404 “Page Not Found”)
+	•	C’est une SPA (React Router, Wouter, etc.). En dev Vite gère le fallback, mais de vieux réglages peuvent casser ça.
+	•	Vérifie que la preview ouvre bien la racine /.
+	•	Pour Wouter/React Router :
+	•	Évite des basename incorrects.
+	•	Assure-toi que le routeur est monté après le chargement des assets React.
+	•	Si tu utilises vite preview pour tester le build, garde la config preview ci-dessus et vérifie que la navigation interne ne fait pas de requêtes réseau vers des chemins non gérés.
+
+5) Hôtes Replit bloqués
+	•	En cas de message “Blocked request. This host … is not allowed”, la clause allowedHosts: ['.replit.dev'] doit suffire.
+	•	Si Replit affiche un host précis et que ça persiste, ajoute-le en plus, exactement :
+
+server: {
+  allowedHosts: ['.replit.dev', 'xxxxxxx.spock.replit.dev']
+}
+
+
+
+6) Vérifications automatiques
+	•	Démarre npm run dev et collecte :
+	•	L’URL exacte de preview servie (hôte/port).
+	•	Les logs HMR (connexion établie ?).
+	•	Les erreurs console (JS) et réseau (404, CORS, WS).
+	•	Ouvre la preview dans un nouvel onglet et force un hard-reload (équivalent Ctrl+Shift+R).
+	•	Confirme que chaque modification de .tsx/.ts/.jsx/.js déclenche bien un HMR ou un full reload.
+
+7) Résolution des cas fréquents
+	•	HMR ne se connecte pas : vérifie que le WS pointe vers le bon host; server.hmr.clientPort: 443 corrige en général sur Replit.
+	•	CSS/JS pas à jour : vérifie les headers no-cache (déjà ajoutés) et supprime toute référence à des fichiers ?v= figés.
+	•	Erreur “ReferenceError: analyzeWithAI is not defined” : cherche où la fonction est appelée; si l’IA est optionnelle, protège l’appel :
+
+if (typeof analyzeWithAI === 'function') { analyzeWithAI(input) }
+
+ou importe/mock correctement la fonction/module.
+
+	•	“Cannot find module ‘@vitejs/plugin-react’” : réinstalle la dépendance en dev.
+	•	Écran blanc : regarde la console du navigateur; s’il y a un chunk introuvable, supprime .vite/ + dist/ et rebuild.
+
+8) Plan B (isolement)
+	•	Lance un build propre puis vite preview :
+
+npm run build
+npm run preview
+
+Vérifie que la preview (mode prod) reflète bien les changements.
+
+	•	Si le souci ne survit qu’en dev, laisse un commentaire avec les différences observées (dev vs preview prod) et propose un correctif.
+
+9) Livrables attendus
+	•	Liste des fichiers modifiés (chemins + diff succinct).
+	•	Copie des logs de terminal clés (install, dev, HMR ready).
+	•	Copie des erreurs console avant/après.
+	•	Confirmation finale :
+	1.	HMR connecté ✅
+	2.	Hard reload affiche la dernière version ✅
+	3.	Navigations SPA sans 404 ✅
+	4.	Plus de message “host not allowed” ✅
+
+⸻
+
+Si quelque chose bloque encore après tout ça, fournis le fichier de config Vite final et le .replit que tu utilises, plus les captures de la console (navigateur + terminal), et applique une dernière passe ciblée. Merci !

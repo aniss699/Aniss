@@ -24,7 +24,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { QuickMissionCreator } from '@/components/missions/quick-mission-creator';
 
-export function Navbar() {
+export default function Navbar() {
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);

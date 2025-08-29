@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ClipboardList, Hand, Plus } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { MissionDetailModal } from '@/components/missions/mission-detail-modal';
-import { paths } from '../routes/paths';
+import { ROUTES } from '../routes/paths';
 
 export default function Missions() {
   const { user } = useAuth();
