@@ -88,107 +88,6 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Desktop Navigation - Unified Simple Structure */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {/* Main sections */}
-            <NavLink href={ROUTES.MARKETPLACE}>Missions</NavLink>
-            <NavLink href="/available-providers">Prestataires</NavLink>
-            <NavLink href={ROUTES.SERVICES}>Services</NavLink>
-            
-            {/* Demo sections - now at main level */}
-            <NavLink href="/demo/missions" className="hidden xl:block">Missions Démo</NavLink>
-            <NavLink href="/demo/profils" className="hidden xl:block">Profils Démo</NavLink>
-            <NavLink href="/demo/ia" className="hidden xl:block">IA Action</NavLink>
-            
-            {/* IA Features - now at main level */}
-            <NavLink href="/ai-dashboard" className="hidden xl:block">
-              <span className="flex items-center">
-                IA Dashboard
-                <Badge className="ml-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs">
-                  NOUVEAU
-                </Badge>
-              </span>
-            </NavLink>
-            <NavLink href="/ai-features" className="hidden xl:block">IA Features</NavLink>
-            <NavLink href="/ai-test" className="hidden xl:block">Test IA</NavLink>
-            
-            {/* Compact dropdown for medium screens only */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="xl:hidden">
-                <button
-                  className={`text-gray-700 hover:text-blue-600 transition-colors cursor-pointer px-2 py-2 rounded-md text-sm font-medium flex items-center ${
-                    location.includes('/demo') || location.includes('/ai-') ? 'text-blue-600 bg-blue-50' : ''
-                  }`}
-                >
-                  <Brain className="w-4 h-4 mr-1" />
-                  Démo & IA
-                  <ChevronDown className="w-4 h-4 ml-1" />
-                  <Badge className="ml-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs">
-                    NOUVEAU
-                  </Badge>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-56 z-50">
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/demo/missions')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Target className="w-4 h-4 mr-2" />
-                    Missions démo
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/demo/profils')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Profils démo
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/demo/ia')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Brain className="w-4 h-4 mr-2" />
-                    IA en action
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/ai-dashboard')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Brain className="w-4 h-4 mr-2" />
-                    IA Dashboard
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/ai-features')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Zap className="w-4 h-4 mr-2" />
-                    IA Features
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <button
-                    onClick={() => handleNavigation('/ai-test')}
-                    className="flex items-center w-full px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
-                  >
-                    <Search className="w-4 h-4 mr-2" />
-                    Test IA
-                  </button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <NavLink href="/features">Fonctionnalités</NavLink>
-          </div>
 
           {/* User Menu / Auth Buttons */}
           <div className="flex items-center space-x-4">
@@ -322,7 +221,7 @@ export function Navbar() {
             {/* Mobile Menu */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="lg:hidden p-2">
+                <Button variant="ghost" size="sm" className="p-2">
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
