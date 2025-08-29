@@ -22,6 +22,10 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../dist/public')));
 
+// Import auth routes
+import authRoutes from './auth-routes.js';
+app.use('/api/auth', authRoutes);
+
 // API Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'AppelsPro API is running' });

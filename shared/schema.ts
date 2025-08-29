@@ -1,5 +1,69 @@
 
-export interface User {
+import { pgTable, serial, varchar, timestamp, text, integer, decimal, boolean, jsonb } from 'drizzle-orm/pg-core';
+import { createInsertSchema } from 'drizzle-zod';
+import { z } from 'zod';
+
+// Tables Drizzle
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  password: varchar('password', { length: 255 }).notNull(),
+  name: varchar('name', { length: 255 }),
+  role: varchar('role', { length: 50 }).notNull().default('CLIENT'),
+  rating_mean: decimal('rating_mean', { precision: 3, scale: 2 }),
+  rating_count: integer('rating_count').default(0),
+  profile_data: jsonb('profile_data'),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+});
+
+export const projects = pgTable('projects', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 500 }).notNull(),
+  description: text('description').notNull(),
+  budget: varchar('budget', { length: 100 }),
+  category: varchar('category', { length: 100 }).notNull(),
+  quality_target: varchar('quality_target', { length: 20 }),
+  risk_tolerance: decimal('risk_tolerance', { precision: 3, scale: 2 }),
+  geo_required: boolean('geo_required').default(false),
+  onsite_radius_km: integer('onsite_radius_km'),
+  status: varchar('status', { length: 50 }).notNull().default('draft'),
+  loc_score: decimal('loc_score', { precision: 5, scale: 2 }),
+  client_id: integer('client_id').notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+});
+
+export const bids = pgTable('bids', {
+  id: serial('id').primaryKey(),
+  project_id: integer('project_id').notNull(),
+  provider_id: integer('provider_id').notNull(),
+  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
+  timeline_days: integer('timeline_days').notNull(),
+  message: text('message').notNull(),
+  score_breakdown: jsonb('score_breakdown'),
+  is_leading: boolean('is_leading').default(false),
+  flagged: boolean('flagged').default(false),
+  created_at: timestamp('created_at').defaultNow().notNull()
+});
+
+// Schemas Zod
+export const insertUserSchema = createInsertSchema(users);
+export const insertProjectSchema = createInsertSchema(projects);
+export const insertBidSchema = createInsertSchema(bids);
+
+// Types
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type Project = typeof projects.$inferSelect;
+export type NewProject = typeof projects.$inferInsert;
+export type Bid = typeof bids.$inferSelect;
+export type NewBid = typeof bids.$inferInsert;
+
+// Legacy interfaces pour compatibilité
+
+// Interfaces legacy maintenues pour compatibilité
+export interface LegacyUser {
   id: string;
   email: string;
   role: 'CLIENT' | 'PRO' | 'PERSON' | 'ADMIN';
@@ -8,7 +72,7 @@ export interface User {
   created_at: Date;
 }
 
-export interface Project {
+export interface LegacyProject {
   id: string;
   title: string;
   description: string;
@@ -120,8 +184,7 @@ export interface SourcingMatch {
   created_at: Date;
 }
 
-// Existing interfaces...
-export interface Bid {
+export interface LegacyBid {
   id: string;
   project_id: string;
   provider_id: string;

@@ -25,6 +25,7 @@ const AITest = React.lazy(() => import('@/pages/ai-test'));
 const DemoProfiles = React.lazy(() => import('@/pages/demo-profiles'));
 const DemoAI = React.lazy(() => import('@/pages/demo-ai'));
 const AvailableProviders = React.lazy(() => import('@/pages/available-providers'));
+const LoginPage = React.lazy(() => import('@/pages/login'));
 const NotFound = React.lazy(() => import('@/pages/not-found'));
 
 // Loading component
@@ -62,6 +63,7 @@ function App() {
                     <Route path="/available-providers" component={AvailableProviders} />
                     <Route path="/demo/profils" component={DemoProfiles} />
                     <Route path="/demo/ia" component={DemoAI} />
+                    <Route path="/login" component={LoginPage} />
                     <Route component={NotFound} />
                   </Switch>
                 </Suspense>

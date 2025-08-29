@@ -204,7 +204,7 @@ export default function Navbar() {
               <div className="flex items-center space-x-3">
                 <Button
                   variant="ghost"
-                  onClick={() => handleAuthClick('login')}
+                  onClick={() => handleNavigation('/login')}
                   className="hidden sm:flex"
                 >
                   Se connecter
@@ -328,7 +328,7 @@ export default function Navbar() {
                         <div className="space-y-3">
                           <Button
                             onClick={() => {
-                              handleAuthClick('login');
+                              handleNavigation('/login');
                               setIsMobileMenuOpen(false);
                             }}
                             variant="outline"
