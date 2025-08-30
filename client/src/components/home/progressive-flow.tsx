@@ -84,8 +84,12 @@ export function ProgressiveFlow({ onComplete }: ProgressiveFlowProps) {
           <CardContent className="p-6 text-center">
             <Users className="w-12 h-12 mx-auto mb-4 text-blue-600" />
             <h3 className="text-xl font-semibold mb-2">👨‍💼 Je suis Client</h3>
-            <p className="text-gray-600">
-              J'ai un projet et je cherche des prestataires qualifiés
+            <h4 className="text-lg font-medium text-blue-700 mb-3">
+              Trouvez le prestataire idéal pour vos projets
+            </h4>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              AppelsPro révolutionne la mise en relation entre clients et prestataires. 
+              Publiez votre projet et recevez des devis personnalisés en quelques heures.
             </p>
           </CardContent>
         </Card>
@@ -102,8 +106,12 @@ export function ProgressiveFlow({ onComplete }: ProgressiveFlowProps) {
           <CardContent className="p-6 text-center">
             <Zap className="w-12 h-12 mx-auto mb-4 text-green-600" />
             <h3 className="text-xl font-semibold mb-2">🛠️ Je suis Prestataire</h3>
-            <p className="text-gray-600">
-              Je propose mes services et cherche des missions
+            <h4 className="text-lg font-medium text-green-700 mb-3">
+              Développez votre activité en tant que pro
+            </h4>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Accédez à de nouvelles opportunités business sans prospection.
+              Répondez aux appels d'offres qui correspondent à vos compétences.
             </p>
           </CardContent>
         </Card>
