@@ -43,6 +43,13 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Bloc personnalisable - À compléter */}
+        <div className="text-center mb-12 sm:mb-16 px-2 sm:px-0">
+          <div className="space-y-6">
+            {/* Contenu à ajouter ici */}
+          </div>
+        </div>
+
         {/* Hero Section */}
         <HeroSection />
 
