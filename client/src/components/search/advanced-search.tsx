@@ -8,7 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { categories, budgetRanges, urgencyLevels } from '@/lib/categories';
+import { CATEGORIES as categories, budgetRanges, urgencyLevels } from '@/lib/categories';
 
 interface SearchFilters {
   query: string;

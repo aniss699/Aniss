@@ -34,7 +34,7 @@ import {
   MessageCircle,
   Phone
 } from 'lucide-react';
-import { categories } from '@/lib/categories';
+import { CATEGORIES as categories } from '@/lib/categories';
 
 interface AvailableProvider {
   id: string;
