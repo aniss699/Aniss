@@ -43,20 +43,10 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bloc personnalisable - Logo */}
+        {/* Bloc d'affichage progressif */}
         <div className="text-center mb-12 sm:mb-16 px-2 sm:px-0">
           <div className="space-y-6">
-            {/* Logo en grand */}
-            <div className="flex justify-center items-center">
-              <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white rounded-3xl p-8 shadow-2xl transform hover:scale-105 transition-all duration-300">
-                <h1 className="text-6xl sm:text-8xl font-black tracking-tight">
-                  AppelsPro
-                </h1>
-                <div className="text-lg sm:text-xl font-medium opacity-90 mt-2">
-                  IA • Missions • Excellence
-                </div>
-              </div>
-            </div>
+            {/* Structure d'affichage progressif - À définir */}
           </div>
         </div>
 
