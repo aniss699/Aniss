@@ -283,9 +283,9 @@ export default function CreateMission() {
 
       // Rediriger vers la liste des missions ou le détail si ID disponible
       if (data.id) {
-        setLocation(paths.missionDetail(data.id));
+        setLocation(`/missions/${data.id}`);
       } else {
-        setLocation(paths.missions);
+        setLocation(ROUTES.missions);
       }
 
     } catch (error) {

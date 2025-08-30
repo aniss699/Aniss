@@ -16,6 +16,7 @@ import {
   Euro,
   Calendar
 } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { CATEGORIES } from '@/lib/categories';
 
 type UserType = 'client' | 'prestataire' | null;
@@ -27,6 +28,16 @@ interface ProgressiveFlowProps {
 
 export function ProgressiveFlow({ onComplete }: ProgressiveFlowProps) {
   const [currentStep, setCurrentStep] = useState(0);
+
+  // Function to get Lucide icon component from icon name
+  const getIcon = (iconName: string) => {
+    const IconComponent = (LucideIcons as any)[
+      iconName.split('-').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join('')
+    ];
+    return IconComponent || LucideIcons.Briefcase;
+  };
   const [userType, setUserType] = useState<UserType>(null);
   const [serviceType, setServiceType] = useState<ServiceType>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -194,8 +205,16 @@ export function ProgressiveFlow({ onComplete }: ProgressiveFlowProps) {
             }}
           >
             <CardContent className="p-4 text-center">
-              <div className="text-2xl mb-2">{category.icon}</div>
-              <h3 className="font-medium text-sm">{category.name}</h3>
+              <div className="mb-3">
+                {(() => {
+                  const IconComponent = getIcon(category.icon);
+                  return <IconComponent className={`w-8 h-8 mx-auto ${category.color}`} />;
+                })()}
+              </div>
+              <h3 className="font-medium text-sm leading-tight">{category.name}</h3>
+              {category.description && (
+                <p className="text-xs text-gray-500 mt-1">{category.description}</p>
+              )}
             </CardContent>
           </Card>
         ))}
