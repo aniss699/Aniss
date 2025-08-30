@@ -285,7 +285,7 @@ export default function CreateMission() {
       if (data.id) {
         setLocation(`/missions/${data.id}`);
       } else {
-        setLocation(ROUTES.missions);
+        setLocation(ROUTES.MISSIONS);
       }
 
     } catch (error) {
