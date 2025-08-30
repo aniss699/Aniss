@@ -72,3 +72,14 @@ export const CATEGORIES = [
     description: 'Autres prestations professionnelles'
   }
 ];
+
+// Export pour la connexion directe (même catégories pour l'instant)
+export const connectionCategories = CATEGORIES;
+
+// Type pour les catégories
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+}

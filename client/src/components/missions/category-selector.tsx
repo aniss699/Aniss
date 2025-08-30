@@ -1,4 +1,4 @@
-import { categories, connectionCategories, type Category } from '@/lib/categories';
+import { CATEGORIES as categories, connectionCategories, type Category } from '@/lib/categories';
 import * as LucideIcons from 'lucide-react';
 
 interface CategorySelectorProps {
