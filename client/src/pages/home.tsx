@@ -4,12 +4,14 @@ import { HeroSection } from '@/components/home/hero-section';
 import { ServiceTypeCards } from '@/components/home/service-type-cards';
 import { CategorySelector } from '@/components/missions/category-selector';
 import { QuickMissionCreator } from '@/components/missions/quick-mission-creator';
+import { ProgressiveFlow } from '@/components/home/progressive-flow';
 import { ROUTES } from '../routes/paths';
 
 export default function Home() {
   const [, setLocation] = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedService, setSelectedService] = useState<'reverse-bidding' | 'direct-connection' | null>('reverse-bidding');
+  const [showProgressiveFlow, setShowProgressiveFlow] = useState(true);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -43,12 +45,29 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bloc d'affichage progressif */}
-        <div className="text-center mb-12 sm:mb-16 px-2 sm:px-0">
-          <div className="space-y-6">
-            {/* Structure d'affichage progressif - À définir */}
-          </div>
+        {/* Toggle pour tester le bloc progressif */}
+        <div className="text-center mb-4">
+          <button 
+            onClick={() => setShowProgressiveFlow(!showProgressiveFlow)}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            {showProgressiveFlow ? '🔼 Masquer' : '🔽 Afficher'} le bloc progressif
+          </button>
         </div>
+
+        {/* Bloc d'affichage progressif */}
+        {showProgressiveFlow && (
+          <div className="mb-12 sm:mb-16 px-2 sm:px-0">
+            <ProgressiveFlow 
+              onComplete={(data) => {
+                console.log('Données du projet:', data);
+                alert('Projet configuré ! Voir la console pour les détails.');
+                // Rediriger vers la création de mission avec les données
+                setLocation('/create-mission');
+              }}
+            />
+          </div>
+        )}
 
         {/* Hero Section */}
         <HeroSection />
