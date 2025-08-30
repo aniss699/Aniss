@@ -361,21 +361,25 @@ export function ProgressiveFlow({ onComplete }: ProgressiveFlowProps) {
   const steps = [renderStep0, renderStep1, renderStep2, renderStep3];
 
   return (
-    <Card className="w-full max-w-6xl mx-auto">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">
-            Créer votre projet - Étape {currentStep + 1}/4
-          </CardTitle>
-          <Badge variant="outline">
-            {Math.round(progress)}% complété
-          </Badge>
+    <div className="w-full max-w-6xl mx-auto">
+      <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 p-6 border-b border-white/20">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">
+              Créer votre projet - Étape {currentStep + 1}/4
+            </h2>
+            <Badge className="bg-white/90 text-gray-700 border-0 shadow-sm">
+              {Math.round(progress)}% complété
+            </Badge>
+          </div>
+          <div className="mt-4">
+            <Progress value={progress} className="w-full h-2 bg-white/40" />
+          </div>
         </div>
-        <Progress value={progress} className="w-full" />
-      </CardHeader>
-      <CardContent className="p-6">
-        {steps[currentStep]()}
-      </CardContent>
-    </Card>
+        <div className="p-8">
+          {steps[currentStep]()}
+        </div>
+      </div>
+    </div>
   );
 }

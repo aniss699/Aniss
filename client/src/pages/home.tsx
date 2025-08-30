@@ -59,15 +59,20 @@ export default function Home() {
 
         {/* Bloc d'affichage progressif */}
         {showProgressiveFlow && (
-          <div className="mb-12 sm:mb-16 px-2 sm:px-0">
-            <ProgressiveFlow 
-              onComplete={(data) => {
-                console.log('Données du projet:', data);
-                alert('Projet configuré ! Voir la console pour les détails.');
-                // Rediriger vers la création de mission avec les données
-                setLocation('/create-mission');
-              }}
-            />
+          <div className="mb-16 px-2 sm:px-0 relative">
+            {/* Fond décoratif harmonisé */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-200/20 via-indigo-200/15 to-purple-200/20 rounded-3xl blur-2xl transform -rotate-1 scale-105"></div>
+            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-100/30 via-purple-100/20 to-blue-100/25 rounded-3xl blur-xl transform rotate-1 scale-102"></div>
+            <div className="relative z-10">
+              <ProgressiveFlow 
+                onComplete={(data) => {
+                  console.log('Données du projet:', data);
+                  alert('Projet configuré ! Voir la console pour les détails.');
+                  // Rediriger vers la création de mission avec les données
+                  setLocation('/create-mission');
+                }}
+              />
+            </div>
           </div>
         )}
 
